@@ -1,0 +1,1336 @@
+\chapter{Computational Modeling as Analysis}
+\section{The Conflation of Analysis and Composition Reveals and Posits Construction}
+
+Formalized score control conflates the analysis and composition of music: now that the abstract formulation of musical order precedes its instantiation as a notation, it is possible to analyze a composer's code to arrive at new insights about the structure of the music and the cognitive processes at play during composition. The creative process gains increased transparency via two routes: first, because of the text-based nature of code, formalized score control reveals the role of metaphor in the creative process; second, a musical analysis may be tested by implementation, as a valid declarative logic implemented as an imperative program that recreates the score. More radically, a musical analysis might be created first as an imperative program that recreates a score. Two examples of this last approach, in which an analysis proceeds first as an imperative sequence of commands, iteratively revised with the goal of recreating a score, are discussed for the remainder of this chapter, after a brief discussion of the variety of metaphors encountered in composers' programs.
+
+\subsection{Formalization Reveals Metaphor}
+A study of Java programmers revealed programs built upon metaphors of explored spatial locations, sentient beings, dancing symbols, buzzing sounds created by absent code, graphic-mathematical transformations, mechanical apparatus, and conversations with intelligent agents (\cite{blackwell2006metaphors}), and correspondence with programming composers reveals a plethora of idiosyncratic formulations that underly automated notation programming. These include quantifying metaphors, in which a composer invents a quantitative system to specify numerically a previously qualitative dimension of music, such as Clarence Barlow's systematic formalization of acoustic consonance and dissonance via ``indigestibility functions'' (\cite{Barlow:2011xz}) or Pablo Cetta's similar work (\cite{Cetta:1011jb}); midwife metaphors, which allow a user community to describe the use of a notation system, whether or not the metaphor appears in the code itself, such as the use of ``pouring'' notes into containers in the Abjad documentation (\cite{Baca:2011xi}); score metaphors, in which the composer improvises an object-based system to track the division of a work into sections, such as Jos\'{e} Lopez-Montez's division of his composition, \emph{Autoparaphrasis}, into summarizing procedures --- ``...granulated sound...explosion...mega-trumpet...granulation in decomposition...hyper-acute... intermediate...disintegration...recapitulation'' (author's translation from the Spanish) --- which describe the sequence of events in the work (\cite{Lopez-Montes:2011mq}); the graphic metaphors of visual programming environments, in which the spatial arrangements of objects organize and communicate data flows; the built-in prescriptive metaphors of programming languages, such as ``flattening a list'' to remove embedded parentheses; and disciplined metaphors, imported into code via an academic discipline, such as the use of ``tree'' and ``leaf'' from graph theory.
+
+\section{Reverse Engineering as Analysis: Two Case Studies in Formalized Score Control as Analysis}
+\subsection{\emph{Cantus in Memory of Benjamin Britten} (1977-1980) by Arvo P\"{a}rt}
+\subsubsection{The Composition}
+\emph{Cantus in Memory of Benjamin Britten} by Estonian composer Arvo P\"{a}rt was composed from 1977 to 1980 and published by Universal Edition in 1980 (\cite{Part:1980fk}). The composition was originally conceived as a series of simple rules governing scale descents and durational relationships between parts, recorded on a napkin during a train ride (\cite{Cope:2010uq}).
+
+\subsubsection{The Approach}
+The task of creating a program that would generate the published score exactly was approached as a test of the work's origin myth; that is, the working hypothesis from the outset was that the entire composition would be easily expressible using a few functions that act recursively to create a complex effect. As the following code shows, this turned out to be true: a single recursive function creates almost all of the work's pitches and rhythms. This is unsurprising, as an analysis of the score reveals the composition to be a simple prolation canon, in which register correlates to a doubling of duration and a one-octave decrease of register relative to the next higher string voice; all parts descend the a natural minor scale until the work's coda, which cannot be modeled with such straightforward rules. (Subsequent revisions of this code by Josiah Oberholtzer reimplemented much of the procedural code here as object-generating classes and revised many of the procedures to take advantage of some of Python's indigenous idioms, such as dictionaries; this code is part of the Abjad manual and is freely available online at projectabjad.org).
+
+\subsubsection{The Code}
+
+The following code generates the score for Arvo P\"{a}rt's \emph{Cantus in Memory of Benjamin Britten} (1980, following the Universal Edition, Philharmonia Series \#555).
+
+The code begins with a typographical wrapper function, which enables the embedding of custom fonts within Lilypond documents:
+
+\begin{figure}[h] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def fonted(aString):
+...     fontString = "\\override #'(font-name . \"Futura\")"
+...     outString = fontString + " {"+ aString +"}"
+...     return outString
+... \end{lstlisting}
+
+\caption{A font function enables custom typefaces. \index{A font function enables custom typefaces.}} 
+\end{figure}
+
+
+Next, the program models the score, beginning with the staffs and their names:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> bell = Staff([])
+>>> contexttools.InstrumentMark( fonted("Campana in La"), fonted("Camp.")  )(bell)
+InstrumentMark(instrument_name='\\override #\'(font-name . "Futura") {Campana in La}', short_instrument_name='\\override #\'(font-name . "Futura") {Camp.}')(Staff{})
+>>> 
+>>> violin1 = Staff([])
+>>> contexttools.InstrumentMark( fonted("Violin I"), fonted("Vl. I") )(violin1)
+InstrumentMark(instrument_name='\\override #\'(font-name . "Futura") {Violin I}', short_instrument_name='\\override #\'(font-name . "Futura") {Vl. I}')(Staff{})
+>>> 
+>>> violin2 = Staff([])
+>>> contexttools.InstrumentMark( fonted("Violin II"), fonted("Vl. II") )(violin2)
+InstrumentMark(instrument_name='\\override #\'(font-name . "Futura") {Violin II}', short_instrument_name='\\override #\'(font-name . "Futura") {Vl. II}')(Staff{})
+>>> 
+>>> viola = Staff([])
+>>> contexttools.InstrumentMark( fonted("Viola"), fonted("Va.") )(viola)
+InstrumentMark(instrument_name='\\override #\'(font-name . "Futura") {Viola}', short_instrument_name='\\override #\'(font-name . "Futura") {Va.}')(Staff{})
+>>> contexttools.ClefMark('alto')(viola)
+ClefMark('alto')(Staff{})
+>>> 
+>>> cello = Staff([])
+>>> contexttools.InstrumentMark( fonted("Cello"), fonted("Vc.") )(cello)
+InstrumentMark(instrument_name='\\override #\'(font-name . "Futura") {Cello}', short_instrument_name='\\override #\'(font-name . "Futura") {Vc.}')(Staff{})
+>>> contexttools.ClefMark('bass')(cello)
+ClefMark('bass')(Staff{})
+>>> 
+>>> bass = Staff([])
+>>> contexttools.InstrumentMark( fonted("Contrabass"), fonted("Cb.") )(bass)
+InstrumentMark(instrument_name='\\override #\'(font-name . "Futura") {Contrabass}', short_instrument_name='\\override #\'(font-name . "Futura") {Cb.}')(Staff{})
+>>> contexttools.ClefMark('bass')(bass)
+ClefMark('bass')(Staff{})\end{lstlisting}
+
+\caption{Modeling the bell and string staffs and their names. \index{Modeling the bell and string staffs and their names.}} 
+\end{figure}
+
+Note that this also includes the appropriate clefs for the staffs, as well as both short and long names for each staff. Next, the program groups the string staffs with a bracket, and adds both a time signature and a tempo; because low-level typographical detail can be adjusted, this step also specifies the space between the instrument name and the left edge of the staff:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> strings = scoretools.StaffGroup([violin1, violin2, viola, cello, bass])
+>>> bell.override.instrument_name.padding = 3
+>>> for staff in strings:
+...     staff.override.instrument_name.padding = 3
+... 
+>>> score = Score([])
+>>> score.append(bell)
+>>> score.append(strings)
+>>> contexttools.TimeSignatureMark((6,4))(bell)
+TimeSignatureMark((6, 4))(Staff{})
+>>> tempo = marktools.LilyPondCommandMark('tempo 4 = 112~120 ')(bell)\end{lstlisting}
+
+\caption{Adding string staffs to a score. \index{Adding string staffs to a score.}} 
+\end{figure}
+
+Next, the program models the bell part. This is straightforward using a series of data abstractions that call one another, and the entire part results from the concomitant use of several functions. As the levels of musical structure addressed by the functions grow, the code leaves the realm of notation modeling -- the modeling of a ``bar'' -- and fluidly enters the realm of music modeling -- the modeling of a ``phrase'':
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def bellBar():
+... 	bar = Measure((6,4),"r2. a'2.")
+... 	marktools.LilyPondCommandMark("laissezVibrer",'after')(bar[1])
+... 	return bar
+... 
+>>> def restBar():
+... 	return Measure((6,4), "r1.")	
+... 
+>>> def couplet():
+... 	return Container([bellBar(), restBar()])	
+... 
+>>> def bellPhrase():
+... 	container = Container([])
+... 	container.extend([couplet(), couplet(), couplet(), restBar(), restBar()])
+... 	return container
+... 
+>>> def bellPart():
+... 	container = Container()
+... 	container.extend(bellPhrase()*11)
+... 	container.extend(restBar()*19)
+... 	lastBellBar = Measure( (6,4), "a'1.")
+... 	marktools.LilyPondCommandMark("laissezVibrer",'after')(lastBellBar[0])
+... 	container.append(lastBellBar)
+... 	return container
+... 
+>>> bell.append(bellPart())
+>>> 
+>>> def sixBarsRest():
+... 	restBars = Container([])
+... 	restBars.extend(Measure( (6,4), "r1.")*6)
+... 	return restBars
+... 
+>>> for staff in strings:
+... 		staff.append(sixBarsRest())
+... \end{lstlisting}
+
+\caption{Modeling the bell part. \index{Modeling the bell part.}} 
+\end{figure}
+
+Next, the program models most of string material, beginning with the pitch material: by creating a set of functions to generate register-dependent descents down the a minor scale; the resulting function is applied to generate a ``descent reservoir,'' a list of pitches, for each instrument, and then a ``contoured descent'' for each instrument, in which the pitches descend from the top of the scale by one more pitch each time before returning to the top of the reservoir:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def descentReservoir(numOctaves,transposition,lastNote):
+... 	theKey = contexttools.KeySignatureMark('a', 'minor') 
+... 	notes = tonalitytools.make_first_n_notes_in_ascending_diatonic_scale(7*numOctaves+1, key_signature=theKey)
+... 	notes.reverse()
+... 	for note in notes:
+... 		note.written_pitch = note.written_pitch + 12*transposition 
+... 	outContainer = []
+... 	for note in notes:
+... 		if note.written_pitch >= lastNote:
+... 			outContainer.append(note)
+... 	sequencetools.flatten_sequence(outContainer)
+... 	return Container(outContainer)
+... 
+>>> violin1Res = descentReservoir(3,-1,0)
+>>> violin2Res = descentReservoir(2,-1,-3)
+>>> vlaRes = descentReservoir(2,-2,-8)
+>>> celloRes = descentReservoir(1,-2,-15)
+>>> bassRes = descentReservoir(1,-2,-12)
+>>> 
+>>> def contouredDescent(reservoir):
+... 	cd = []
+... 	for x in range(len(reservoir)):
+... 		cd.append(list(reservoir[:x+1][:]))
+... 	cd = sequencetools.flatten_sequence(cd)
+... 	return cd
+... 
+>>> vln1cd = contouredDescent(violin1Res)
+>>> vln2cd = contouredDescent(violin2Res)
+>>> vlacd = contouredDescent(vlaRes)
+>>> cellocd = contouredDescent(celloRes)
+>>> basscd = contouredDescent(bassRes)\end{lstlisting}
+
+\caption{Modeling pitch as a series of scalar descents. \index{Modeling pitch as a series of scalar descents.}} 
+\end{figure}
+
+The next step in modeling the pitches addresses the relationship between the lower notes of the score's diads and the descending upper notes. Declaratively, this relationship may be described succinctly: ``The lower note of a diad is the a minor arpeggio note equal to or less than the upper note of the diad.'' An imperative version has been created through a cascade of conditional statements (a dictionary structure would be both more efficient and more characteristic of the Python programming language; however, the following has been preserved in the name of readability):
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def addNearestArpNote(note):
+...     pitch = note.written_pitch
+...     pitchClass = pitch.named_diatonic_pitch_class
+...     if pitchClass == pitchtools.NamedDiatonicPitchClass('a'):
+... 	    shadowPitch = note.written_pitch - 5
+...     elif pitchClass == pitchtools.NamedDiatonicPitchClass('g'):
+... 	    shadowPitch = note.written_pitch - 3
+...     elif pitchClass == pitchtools.NamedDiatonicPitchClass('f'):
+... 	    shadowPitch = note.written_pitch - 1
+...     elif pitchClass == pitchtools.NamedDiatonicPitchClass('e'):
+...         shadowPitch = note.written_pitch - 4
+...     elif pitchClass == pitchtools.NamedDiatonicPitchClass('d'):
+...         shadowPitch = note.written_pitch - 2
+...     elif pitchClass == pitchtools.NamedDiatonicPitchClass('c'):
+...         shadowPitch = note.written_pitch - 3
+...     elif pitchClass == pitchtools.NamedDiatonicPitchClass('b'):
+...         shadowPitch = note.written_pitch - 2
+...     return Chord( [note.written_pitch,shadowPitch], Duration(1,8) )
+... \end{lstlisting}
+
+\caption{Modeling the pitches: a switch system for choosing arpeggio notes. \index{Modeling the pitches: a switch system for choosing arpeggio notes.}} 
+\end{figure}
+
+The arpeggio selection function is then applied to the contoured descents, resulting in a sequence of descending diads:
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def addShadow(cd):
+...     shadowed = []
+...     notLast = cd[:-1]
+...     for note in notLast:
+... 	    chord = addNearestArpNote(note)
+... 	    shadowed.append(chord)
+...     shadowed = sequencetools.flatten_sequence(shadowed)
+...     last = Chord( [cd[-1].written_pitch], cd[-1].duration)
+...     shadowed.append(last)
+...     return shadowed
+... 
+>>> vln1shadowed = addShadow(vln1cd)
+>>> vln2shadowed = addShadow(vln2cd)
+>>> vlaChorded = []
+>>> for note in vlacd:
+... 	chord = Chord([note.written_pitch],note.duration)
+... 	vlaChorded.append(chord)
+... 
+>>> celloShadowed = addShadow(cellocd)
+>>> bassShadowed = addShadow(basscd)\end{lstlisting}
+
+\caption{Applying the arpeggio notes to the scalar descents. \index{Applying the arpeggio notes to the scalar descents.}} 
+\end{figure}
+Next, the program models the rhythmic behavior of the score. Each part alternates between two durations, and each lower string part doubles the durations of the previous part; this is modeled via recursion, a programming technique in which a function calls itself until a terminal condition is reached:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def durateDescent(longDuration, shadowedDescent):
+...     outList = []
+...     for x in range(len(shadowedDescent)):
+... 	    if x % 2 == 0:
+... 		    chord = Chord(shadowedDescent[x].written_pitches,longDuration)
+... 		    outList.append(chord)
+... 	    else:
+... 		    chord = Chord(shadowedDescent[x].written_pitches,longDuration/2)
+... 		    outList.append(chord)
+...     return outList
+... 
+>>> def prolateRecursively(firstDur, multiplier, descentList, outContainer=[],listIndex = 0):
+... 	if listIndex == len(descentList):
+... 		return outContainer
+... 	else:
+... 		durated = durateDescent(firstDur * pow(multiplier,listIndex), descentList[listIndex])
+... 		firstRest = Rest(firstDur * pow(multiplier, listIndex) *1.5)
+... 		duratedContainer = Container([])
+... 		duratedContainer.append(firstRest)
+... 		for event in durated:
+... 			duratedContainer.append(event)
+... 		outContainer.append(duratedContainer)
+... 		return prolateRecursively(firstDur, multiplier, descentList, outContainer,listIndex = listIndex + 1)
+... 
+>>> shadowedDescents = [vln1shadowed, vln2shadowed, vlaChorded, celloShadowed, bassShadowed]
+>>> duratedDescents = prolateRecursively(Duration(1,2), 2, shadowedDescents)\end{lstlisting}
+
+\caption{Recursively generating most of the string parts' rhythms. \index{Recursively generating most of the string parts' rhythms.}} 
+\end{figure}
+
+Finally, all the durations are split cyclically at intervals of six quarter notes, tying across the newly created splits, in order to yield a series of durations that comports with the score's time signature:  
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> for x in range(2):
+... 	shards = componenttools.split_components_at_offsets(duratedDescents[x].leaves, [Duration(6,4)], cyclic=True)
+... \end{lstlisting}
+
+\caption{Splitting durations cyclically by the duration of one bar. \index{Splitting durations cyclically by the duration of one bar.}} 
+\end{figure}
+
+While the above functions model most of the pitches and rhythms of the piece, each part contains an irreducible surplus that must be nonetheless composed out. The next code manually adds the remaining music to each string part:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> copies = componenttools.copy_components_and_covered_spanners( duratedDescents[0][-20:])
+>>> duratedDescents[0].extend(copies)
+>>> strings[0].append(duratedDescents[0])
+>>> vln1finalSustain = Container([])
+>>> for x in range(43):
+... 	vln1finalSustain.append(Note(0, Duration(6,4)))
+... 
+>>> vln1finalSustain.append(Note(0, Duration(2,4)))
+>>> tietools.TieSpanner(vln1finalSustain[:])
+TieSpanner(c'1., c'1., ... [40] ..., c'1., c'2)
+>>> vln1finalSustain.extend([Rest((1,4)), Rest((3,4))])
+>>> strings[0].append(vln1finalSustain)
+>>> 
+>>> copies = componenttools.copy_components_and_covered_spanners( duratedDescents[1][-15:])
+>>> copies = list(copies[:])
+>>> copies[-1].written_duration = Duration(1,1)
+>>> copies.append(Note(-3,Duration(1,2)))
+>>> for note in copies:
+... 	accent = marktools.articulation = marktools.Articulation('accent')(note)
+... 	tenuto = marktools.articulation = marktools.Articulation('tenuto')(note)
+... 
+>>> duratedDescents[1].extend(copies)
+>>> strings[1].append(duratedDescents[1])
+>>> vln2finalSustain = Container([])
+>>> for x in range(32):
+... 	vln2finalSustain.append(Note(-3,Duration(6,4)))
+... 
+>>> vln2finalSustain.append(Note(-3,Duration(1,2)))
+>>> tietools.TieSpanner(vln2finalSustain[:])
+TieSpanner(a1., a1., ... [29] ..., a1., a2)
+>>> tenuto = marktools.articulation = marktools.Articulation('tenuto')(vln2finalSustain[0])
+>>> accent = marktools.articulation = marktools.Articulation('accent')(vln2finalSustain[0])
+>>> strings[1].append(vln2finalSustain)
+>>> vln2finalSustain.extend([Rest((1,4)), Rest((3,4))])
+>>> 
+>>> for note in duratedDescents[2][-11:]:
+... 	tenuto = marktools.Articulation('tenuto')(note)
+... 	accent = marktools.Articulation('accent')(note)
+... \end{lstlisting}
+
+\caption{Manual composition of pitches and rhythms after generation. \index{Manual composition of pitches and rhythms after generation.}} 
+\end{figure}
+
+Because the durations of the viola part cross bars, it is necessary to split the viola part's durations cyclically at an interval of six quarter notes, to conform to the score's time signature.
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> copies = componenttools.copy_components_and_covered_spanners( duratedDescents[2][-11:])
+>>> for note in copies:
+... 		if note.written_duration == Duration(4,4):
+... 				note.written_duration = Duration(8,4)
+... 		else:
+... 				note.written_duration = Duration(4,4)
+... 
+>>> duratedDescents[2].extend(copies)
+>>> shards = componenttools.split_components_at_offsets(duratedDescents[2].leaves, [Duration(6,4)], cyclic=True)
+>>> bridge = Note(-8,Duration(1,1))
+>>> tenuto = marktools.Articulation('tenuto')(bridge)
+>>> accent = marktools.Articulation('accent')(bridge)
+>>> duratedDescents[2].append(bridge)
+>>> strings[2].append(duratedDescents[2])
+>>> violaFinalSustain = Container([])
+>>> for x in range(21):
+... 	violaFinalSustain.append(Note(-8,Duration(6,4)))
+... 
+>>> violaFinalSustain.append(Note(-8,Duration(1,2)))
+>>> tietools.TieSpanner(violaFinalSustain[:])
+TieSpanner(e1., e1., ... [18] ..., e1., e2)
+>>> tenuto = marktools.Articulation('tenuto')(violaFinalSustain[0])
+>>> accent = marktools.Articulation('accent')(violaFinalSustain[0])
+>>> strings[2].append(violaFinalSustain)
+>>> violaFinalSustain.extend([Rest((1,4)), Rest((3,4))])\end{lstlisting}
+
+\caption{Splitting and finishing the viola part. \index{Splitting and finishing the viola part.}} 
+\end{figure}
+
+Likewise, the cello and contrabass parts must be split cyclically by the duration of the meter:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> duratedDescents[3][-1].written_pitches = [-15,-20]
+>>> copies = componenttools.copy_components_and_covered_spanners( duratedDescents[3][-8:] )
+>>> for chord in copies[1:]:
+... 	chord.written_pitches = [chord.written_pitches[1]]
+... 
+>>> for chord in copies:
+... 	tenuto = marktools.Articulation('tenuto')(chord)
+... 	accent = marktools.Articulation('accent')(chord)
+... 
+>>> duratedDescents[3].extend(copies)
+>>> shards = componenttools.split_components_at_offsets(duratedDescents[3].leaves, [Duration(6,4)], cyclic=True)
+>>> strings[3].extend(duratedDescents[3])
+>>> celloCodetta = Container("a,1. ~ a,2 b,1 ~ b,1. ~ b,1. a,1. ~ a,1. ~ a,1. ~ a,1. ~ a,1. ~ a,2 r4 r2.")
+>>> strings[3].append(celloCodetta)
+>>> 
+>>> duratedDescents[4].pop(-1)
+Chord('<c>\\maxima')
+>>> duratedDescents[4].pop(-1)
+Chord('<c d>\\longa')
+>>> duratedDescents[4].pop(-1)
+Chord('<c e>\\maxima')
+>>> cbFinalChords = [Chord([-8,-20], Duration(32,4)), Chord([-10,-22], Duration(16,4)), Chord([-12,-24], Duration(32,4)), Chord([-13], Duration(16,4)), Chord([-15], Duration(32,4))]
+>>> duratedDescents[4].extend(cbFinalChords)
+>>> shards = componenttools.split_components_at_offsets(duratedDescents[4].leaves, [Duration(6,4)], cyclic=True)
+>>> duratedDescents[4].extend([Rest(Duration(1,4)), Rest(Duration(3,4))])
+>>> strings[4].append(duratedDescents[4])\end{lstlisting}
+
+\caption{The cello and contrabass pitches and rhythms composed to completion. \index{The cello and contrabass pitches and rhythms composed to completion.}} 
+\end{figure}
+
+The program now models the entire score's pitches and rhythms; the rest of the code models dynamic and technical indications, as well as document formatting. Because it's useful at this point to be able to refer to the score via measure indexes, the program adds measure objects to the previously generated music (note that the previous code generates the entire composition's pitches and rhythms nonmensurally):
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> bellBars = []
+>>> shards = componenttools.split_components_at_offsets(score[0].leaves, [Duration(6,4)], cyclic=True)
+>>> for shard in shards:
+... 	bellBars.append(Measure((6,4),shard))
+... 
+>>> stringPartBars = []
+>>> for staff in strings:
+... 	theBars = []
+... 	for split in componenttools.split_components_at_offsets(staff.leaves, [Duration(6,4)], cyclic=True):
+... 		theBars.append( Measure((6,4),split))
+... 	stringPartBars.append(theBars)
+... \end{lstlisting}
+
+\caption{Placing previously generated pitches and rhythms into measures. \index{Placing previously generated pitches and rhythms into measures.}} 
+\end{figure}
+
+Now that the music can be accessed via measure numbers, the program adds dynamic markings to all the parts, as indicated in the score (without apparent pattern):
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> mark = contexttools.DynamicMark('ppp')(bellBars[0][1])
+>>> mark = contexttools.DynamicMark('pp')(bellBars[8][1])
+>>> mark = contexttools.DynamicMark('p')(bellBars[18][1])
+>>> mark = contexttools.DynamicMark('mp')(bellBars[26][1])
+>>> mark = contexttools.DynamicMark('mf')(bellBars[34][1])
+>>> mark = contexttools.DynamicMark('f')(bellBars[42][1])
+>>> mark = contexttools.DynamicMark('ff')(bellBars[52][1])
+>>> mark = contexttools.DynamicMark('fff')(bellBars[60][1])
+>>> mark = contexttools.DynamicMark('ff')(bellBars[68][1])
+>>> mark = contexttools.DynamicMark('f')(bellBars[76][1])
+>>> mark = contexttools.DynamicMark('mf')(bellBars[84][1])
+>>> mark = contexttools.DynamicMark('pp')(bellBars[-1][0])
+>>> 
+>>> mark = contexttools.DynamicMark('ppp')(stringPartBars[0][7][1])
+>>> mark = contexttools.DynamicMark('pp')(stringPartBars[0][15][0])
+>>> mark = contexttools.DynamicMark('p')(stringPartBars[0][22][3])
+>>> mark = contexttools.DynamicMark('mp')(stringPartBars[0][32][0])
+>>> mark = contexttools.DynamicMark('mf')(stringPartBars[0][39][3])
+>>> mark = contexttools.DynamicMark('f')(stringPartBars[0][47][0])
+>>> mark = contexttools.DynamicMark('ff')(stringPartBars[0][56][0])
+>>> mark = contexttools.DynamicMark('fff')(stringPartBars[0][62][2])
+>>> 
+>>> mark = contexttools.DynamicMark('pp')(stringPartBars[1][7][0])
+>>> mark = contexttools.DynamicMark('p')(stringPartBars[1][12][0])
+>>> mark = contexttools.DynamicMark('p')(stringPartBars[1][13][0])
+>>> mark = contexttools.DynamicMark('mp')(stringPartBars[1][25][0])
+>>> mark = contexttools.DynamicMark('mf')(stringPartBars[1][34][1])
+>>> mark = contexttools.DynamicMark('f')(stringPartBars[1][44][1])
+>>> mark = contexttools.DynamicMark('ff')(stringPartBars[1][54][1])
+>>> mark = contexttools.DynamicMark('fff')(stringPartBars[1][62][1])
+>>> 
+>>> mark = contexttools.DynamicMark('p')(stringPartBars[2][8][0])
+>>> mark = contexttools.DynamicMark('mp')(stringPartBars[2][19][1])
+>>> mark = contexttools.DynamicMark('mf')(stringPartBars[2][30][0])
+>>> mark = contexttools.DynamicMark('f')(stringPartBars[2][36][0])
+>>> mark = contexttools.DynamicMark('ff')(stringPartBars[2][52][0])
+>>> mark = contexttools.DynamicMark('fff')(stringPartBars[2][62][0])
+>>> 
+>>> mark = contexttools.DynamicMark('p')(stringPartBars[3][10][0])
+>>> mark = contexttools.DynamicMark('mp')(stringPartBars[3][21][0])
+>>> mark = contexttools.DynamicMark('mf')(stringPartBars[3][31][0])
+>>> mark = contexttools.DynamicMark('f')(stringPartBars[3][43][0])
+>>> mark = contexttools.DynamicMark('ff')(stringPartBars[3][52][0])
+>>> mark = contexttools.DynamicMark('fff')(stringPartBars[3][62][0])\end{lstlisting}
+
+
+\caption{Adding dynamic markings to parts via measure indexes. \index{Adding dynamic markings to parts via measure indexes.}} 
+\end{figure}
+
+Next, the program adds technical and expressive markings to the music, again via measure indexes:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> markup = markuptools.Markup("\\left-column {div. \\line {con sord.} }", Up)(stringPartBars[0][6][1])
+>>> markup = markuptools.Markup('sim.', Up)(stringPartBars[0][8][0])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[0][58][3])
+>>> markup = markuptools.Markup('div.', Up)(stringPartBars[0][59][0])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[0][63][3])
+>>> 
+>>> markup = markuptools.Markup('div.', Up)(stringPartBars[1][7][0])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[1][66][1])
+>>> markup = markuptools.Markup('div.', Up)(stringPartBars[1][67][0])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[1][74][0])
+>>> 
+>>> markup = markuptools.Markup('sole', Up)(stringPartBars[2][8][0])
+>>> 
+>>> markup = markuptools.Markup('div.', Up)(stringPartBars[3][10][0])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[3][74][0])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[3][84][1])
+>>> markup = markuptools.Markup('\\italic {espr.}', Down)(stringPartBars[3][86][0])
+>>> markup = markuptools.Markup('\\italic {molto espr.}', Down)(stringPartBars[3][88][1])
+>>> 
+>>> markup = markuptools.Markup('div.', Up)(stringPartBars[4][14][0])
+>>> markup = markuptools.Markup('\\italic {espr.}', Down)(stringPartBars[4][86][0])
+>>> shards = componenttools.split_components_at_offsets(stringPartBars[4][88][:], [Duration(1,1), Duration(1,2)]) 
+>>> markup = markuptools.Markup('\\italic {molto espr.}', Down)(stringPartBars[4][88][1])
+>>> markup = markuptools.Markup('uniti', Up)(stringPartBars[4][99][1])\end{lstlisting}
+
+\caption{Adding technical and expressive markings to parts via measure indexes. \index{Adding technical and expressive markings to parts via measure indexes.}} 
+\end{figure}
+
+Scores might contain markings beyond those in Lilypond's model of common notation; many of them can be created by combining existing markings in LilyPond's lexicon. In this score, a successive upbow-downbow marking must be created and applied, by combining the upbow and downbow markings into a single command:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def rebow(component):
+...     markup = markuptools.Markup('\\concat { \\musicglyph #\"scripts.downbow\" \\hspace #1 \\musicglyph #\"scripts.upbow\" }', Up)(component)
+... 
+>>> rebow(stringPartBars[0][64][0])
+>>> rebow(stringPartBars[1][75][0])
+>>> rebow(stringPartBars[2][86][0])\end{lstlisting}
+
+\caption{Defining and using a custom technical marking. \index{Defining and using a custom technical marking.}} 
+\end{figure}
+
+Next, a list of measure numbers and a loop add rehearsal markings to the score:
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> rehearsalBars = [7,13,19,25,31,37,43,49,55,61,67,73,79,85,91,97,103]
+>>> #use a loop to place the marks. attaching them to the top staff is fine,
+... for bar in rehearsalBars:
+... 		marktools.LilyPondCommandMark("mark \\default")(bellBars[bar-1][0])
+... 
+LilyPondCommandMark('mark \\default')(r1.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r1.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r1.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r1.)
+LilyPondCommandMark('mark \\default')(r2.)
+LilyPondCommandMark('mark \\default')(r1.)
+LilyPondCommandMark('mark \\default')(r1.)
+LilyPondCommandMark('mark \\default')(r1.)\end{lstlisting}
+
+\caption{Adding rehearsal marks. \index{Adding rehearsal marks.}} 
+\end{figure}
+
+The remainder of the program handles page layout and the formatting of the entire score, adjusting the space = time relationship that governs horizontal placement of typographical elements, the spacing and thickness of score elements, the size of the page, the composer, and the title; document layout is also object-oriented, and the code becomes a series of lines setting the attribute values of a LilyPondFile and a Score object:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> score.set.proportional_notation_duration = schemetools.SchemeMoment(1, 8)
+>>> score.override.system_start_bar.thickness = 15
+>>> score.override.system_start_square.padding = 3
+>>> score.override.system_start_square.thickness = 5
+>>> score.override.system_start_bracket.padding = 2.5
+>>> score.override.rehearsal_mark.padding = 1.3
+>>> score.override.rehearsal_mark.font_name = "Futura"
+>>> score.override.script.padding = 0.9
+>>> 
+>>> lily = lilypondfiletools.make_basic_lilypond_file(score)
+>>> lily.global_staff_size = 16
+>>> lily.layout_block.ragged_right = False
+>>> lily.paper_block.markup_system_spacing__basic_distance = 0
+>>> lily.paper_block.markup_system_spacing__basic_distance = 0
+>>> lily.paper_block.bottom_margin = 1 * 25.4
+>>> lily.paper_block.top_margin = 1 * 25.4
+>>> lily.paper_block.left_margin = 1.25 * 25.4
+>>> lily.paper_block.right_margin = 1.5 * 25.4
+>>> lily.paper_block.paper_width = 11 * 25.4
+>>> lily.paper_block.paper_height = 17 * 25.4
+>>> lily.header_block.composer = markuptools.Markup( fonted('Arvo Pärt') )
+>>> lily.header_block.title = markuptools.Markup( fonted('Cantus in Memory of Benjamin Britten (1980)') )\end{lstlisting}
+
+\caption{Document layout and formatting. \index{Document layout and formatting.}} 
+\end{figure}
+
+Finally, the program renders a .pdf file (\ref{sec:cantus}).
+\subsection{\emph{Windungen} (1976) by Iannis Xenakis}
+\subsubsection{The Composition}
+Iannis Xenakis's \emph{Windungen} for twelve cellos was commissioned by the cello section of the Berlin Philharmonic in 1976. The composition of the work has not been carefully documented; however, Xenakis biographer James Harley notes that Xenakis composed the work while exploring basic principles of the branch of mathematics known as group theory (\cite[90]{harley2004xenakis}), the simplest applications of which pertain to basic combinatoric groups of permutations and combinations (\cite{magnus2004combinatorial}). Xenakis's electroacoustic experiments with random walks influenced his acoustic music during the 1970s, and pieces from 1973---1984 made use of Brownian motion and random walks to generate pitch material (\cite{solomos2001unity}). In the author's process of modeling, it became clear that the metaphor of a wave reflecting off a surface --- a central metaphor of Xenakis's stochastic synthesis algorithms (\cite{Luque2009}) --- governed the spatial patterns with which the sounds rotate through the ensemble.
+\subsubsection{The Approach}
+Unlike the P\"{a}rt, no large-scale formal hypothesis for the composition existed prior to the creation of a rendering program. For this reason, the process of reconstruction became an iterative process of successive approximation, section by section through the score, in which code proposed a model of composition and resulting notation assessed the possibility that the original mode of composition could have resembled the generating model. When the resulting notation deviated from the published score, the code was revised to generate results more like those in the published score --- acknowledging that techniques of constrained randomness may potentially generate substantially different results from the same generative principles. Given the documented historic context of the work, this process was undertaken in the presence of possible applications of simple set-based selection and random walks, which proved fruitful: along the way, it was discovered that events seem to happen in exclusive arrangements, i.e., each of the twelve players enters at a different time in the measure, although they all enter in the same measure, or each of the twelve player plays a different pitch in a certain set of pitches. Despite these general guidelines, the relationship between the published score and its encoded reconstruction was substantially noisier and less determined than that in the case of the P\"{a}rt, due to the presupposed use of stochastic techniques.
+\subsubsection{The Code}
+
+The composition begins with diatonic material --- the first three scale degrees of an A major scale --- rotated throughout the ensemble; on the page, this seems to be a graphic rotation through the staffs of the score. First, the program models the rotation of materials through the score's twelve staffs:
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_base_list_of_compressed_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth):
+...     lowerBound = staffIndexBoundsTuple[0]
+...     upperBound = staffIndexBoundsTuple[1]
+...     bitList = range(lowerBound - 1, upperBound + 1)
+...     rotations = [ bitList[x:x+rotationBandwidth] for x in range(0, len(bitList) - rotationBandwidth + 1) ]
+...     del(rotations[0][0])
+...     del(rotations[-1][-1])
+...     return rotations
+... 
+>>> def make_base_list_of_uncompressed_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth):
+...     lowerBound = staffIndexBoundsTuple[0]
+...     upperBound = staffIndexBoundsTuple[1]
+...     bitList = range(lowerBound, upperBound)
+...     rotations = [ bitList[x:x+rotationBandwidth] for x in range( len(bitList) - rotationBandwidth + 1) ]
+...     return rotations
+... 
+>>> def make_base_list_of_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth, compressedReflections):
+...     if compressedReflections == True:
+...         rotations = make_base_list_of_compressed_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth)
+...     else:
+...         make_base_list_of_uncompressed_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth)
+...     return rotations
+... 
+>>> def mirror_base_list_of_rotation_tuples(rotations):
+...     copied = rotations[1:-1]
+...     copied.reverse()
+...     back = copied
+...     rotations.extend( back )
+...     return rotations
+... 
+>>> def make_mirorred_base_list_of_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth, compressedReflections):
+...     rotations = make_base_list_of_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth, compressedReflections)
+...     rotations = mirror_base_list_of_rotation_tuples(rotations)
+...     return rotations
+... \end{lstlisting}
+
+\caption{Modeling the rotation of material through the score. \index{Modeling the rotation of material through the score.}} 
+\end{figure}
+
+With these functions, it is possible to create a single function that makes a cyclic matrix, specifying which staffs the rotating music should be written on at any given moment in given rotation:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_cyclic_matrix_for_rotation_by_bandwidth(staffIndexBoundsTuple, rotationBandwidth, compressedReflections = True):
+...     rotations = make_mirorred_base_list_of_rotation_tuples(staffIndexBoundsTuple, rotationBandwidth, compressedReflections)
+...     matrix = sequencetools.CyclicMatrix(rotations)
+...     return matrix
+... \end{lstlisting}
+
+\caption{A function that returns a matrix of cyclic tuples to specify which staffs the rotating music should be written on. \index{A function that returns a matrix of cyclic tuples to specify which staffs the rotating music should be written on.}} 
+\end{figure}
+
+
+One quirky behavior of the way that Xenakis rotates material throughout the ensemble is that the endpoints of the rotation are often solos, as though the rotating material compresses and expands as it rotates, compressing into the part of a single instrument at the endpoints of rotation:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def goingUp(staffIndexes):
+...     if staffIndexes[0][0] == staffIndexes[1][0]:
+...         return False
+...     else:
+...         return True
+... 
+>>> def add_bookends_to_staff_indexes(staffIndexes):
+...     if goingUp(staffIndexes) == True:           
+...         frontBookend = [ staffIndexes[0][1] ]
+...         rearBookend = [ staffIndexes[-1][0] ]
+...     else:
+...         frontBookend = [ staffIndexes[0][0] ]
+...         rearBookend = [ staffIndexes[-1][1] ]
+...     staffIndexes.insert(0, frontBookend)
+...     staffIndexes.append( rearBookend )
+...     return staffIndexes
+... \end{lstlisting}
+
+\caption{Modeling Xenakis's bookended rotations. \index{Modeling Xenakis's bookended rotations.}} 
+\end{figure}
+
+With a model of rotation in place, the music can be modeled as a single staff, to be rotated throughout the ensemble; the single staff can be divided, and portions of it copied to the staffs specified by the two-dimensional staff index matrix described above:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def pair_tuples_with_splits_using_pitches_from_expr(splits, staffIndexes):
+...     splitTuplePairs = [ ]
+...     for x in range( len(splits) ):
+...         pair = staffIndexes[x], splits[x]
+...         splitTuplePairs.append(pair)
+...     return splitTuplePairs
+... 
+>>> def pair_pitches_with_splits(matrix, splits, phaseOffset, soloBookends = False):
+...     if soloBookends == True:
+...         staffIndexes = [matrix[x + phaseOffset] for x in range( len(splits) - 2 ) ]
+...         staffIndexes = add_bookends_to_staff_indexes(staffIndexes)
+...     else:
+...         staffIndexes = [matrix[x + phaseOffset] for x in range( len(splits) ) ]
+...     splitTuplePairs = pair_tuples_with_splits_using_pitches_from_expr(splits, staffIndexes)
+...     return splitTuplePairs
+... 
+>>> def repitch_copy(copied, pitch):
+...     for note in iterationtools.iterate_notes_in_expr(copied):
+...         note.written_pitch = pitch
+...     return copied
+... 
+>>> def add_split_to_score_by_tuple(split, score, staffTuple):
+...     allStaffs = set(range( len(score) ) )
+...     soundStaffs = set(staffTuple)
+...     silenceStaffs = allStaffs - soundStaffs
+...     for x in soundStaffs:
+...         copied = componenttools.copy_components_and_covered_spanners(split)
+...         score[x].extend( copied )
+...     for x in silenceStaffs:
+...         duration = sum( [y.written_duration for y in split] ) 
+...         duration = Duration( duration )
+...         leaves = leaftools.make_tied_leaf(Rest, duration)
+...         score[x].extend( leaves )
+... \end{lstlisting}
+
+\caption{From single staff to rotating staffs. \index{From single staff to rotating staffs.}} 
+\end{figure}
+
+Sometimes the pitch material varies within the rotation; for example, each of the three playing cellos might play a different pitch, rather than all three playing the same pitch. It becomes necessary to select different pitches for the different cellos performing at any given moment. Because the section of the score has already been modeled as a distributed single staff, another stage is added to the process of rotation, in which the single staff may be dynamically repitched when it is copied to multiple staves:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def add_repitched_split_to_score_by_tuple(split, score, staffIndexTuple, pitchGroup):       
+...     shuffle(pitchGroup)
+...     cyclicPitchTuple = sequencetools.CyclicTuple(pitchGroup)
+...         #pair the pitch with each staff.
+...     staffPitchPairs = zip(staffIndexTuple,cyclicPitchTuple)
+...         #(3, 1), (4,-3), (5, 1)
+...     #use set difference to get two lists: which staffs have music, and which silence.
+...     allStaffs = set(range( len(score) ) )
+...     soundStaffs = set(staffIndexTuple)
+...     silenceStaffs = allStaffs - soundStaffs
+...     for pair in staffPitchPairs:
+...         staffIndex = pair[0]
+...         pitch = pair[1]
+...         copied = componenttools.copy_components_and_covered_spanners(split)
+...         copied = repitch_copy(copied, pitch)
+...         score[ staffIndex ].extend( copied )
+...     for x in silenceStaffs:
+...         duration = sum( [y.written_duration for y in split] ) 
+...         duration = Duration( duration )
+...         leaves = leaftools.make_tied_leaf(Rest, duration)
+...         score[x].extend( leaves )
+... 
+>>> def add_splits_to_score_by_tuples(score, splitTuplePairs, pitchGroup):
+...     for pair in splitTuplePairs:
+...         staffTuple = pair[0]
+...         split = pair[1]
+...         if pitchGroup == [ ]:
+...             add_split_to_score_by_tuple(split, score, staffTuple)
+...         else:
+...             add_repitched_split_to_score_by_tuple(split, score, staffTuple, pitchGroup)
+... \end{lstlisting}
+
+\caption{Repitching the staff as it rotates. \index{Repitching the staff as it rotates.}} 
+\end{figure}
+
+Because the rotation occurred at a resolution of a sixteenth note, rests must be fused in order to create durationally appropriate rests (rather than successions of many sixteenth-note rests.) Beam spanners are applied to beats containing notes:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def fuse_rests_in_beat(beat):
+...     for group in componenttools.yield_topmost_components_grouped_by_type(beat):
+...         if isinstance(group[0], Rest):
+...             leaftools.fuse_leaves( group[:] )
+... 
+>>> def fuse_rests_in_staff_by_beats(beats):
+...     for beat in beats:
+...         fuse_rests_in_beat(beat)
+... 
+>>> def apply_beam_spanner_to_non_rest_beat(beat, brokenBeam = False):
+...     if not all( [isinstance(x,Rest) for x in beat] ):
+...         beamtools.BeamSpanner(beat[:],Up)
+...         if len(beat) == 4 and brokenBeam == True:
+...             right = marktools.LilyPondCommandMark("set stemRightBeamCount = #1")(beat[1])
+...             left = marktools.LilyPondCommandMark("set stemLeftBeamCount = #1")(beat[2])
+... 
+>>> def apply_beam_spanner_to_non_rest_beats(beats, brokenBeam = False):
+...     for beat in beats:
+...         apply_beam_spanner_to_non_rest_beat(beat, brokenBeam = brokenBeam)
+... \end{lstlisting}
+
+\caption{Modeling the low-level typographical habits in the rotation section. \index{Modeling the low-level typographical habits in the rotation section.}} 
+\end{figure}
+
+All of this code so far has modeled high-level behaviors of material without considering the selection of pitch. The ability to choose pitch from a reservoir of possible pitches, with and without repetition, is a central element of the music; here a function makes a random choice from a set and the iterative use of this function in a second function creates a staff of randomly chosen pitches:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def choose_pitch_without_repetition(pitch, choices):
+...     chosen = pitch
+...     while chosen == pitch:
+...         candidate = choice(choices)
+...         if candidate != pitch:
+...             chosen = candidate
+...     return chosen
+... 
+>>> def make_staff_with_random_pitches(choices, numPitches, brokenBeam = False):
+...     notes = [ ]
+...     pitchList = choices
+...     chosen = choices[-1]
+...     for x in range(numPitches):
+...         pitch = choose_pitch_without_repetition(chosen, choices)
+...         chosen = pitch
+...         note = Note(pitch, Duration(1,16) )
+...         notes.append( note )
+...     staff = Staff(notes)
+...     #if brokenBeam == True:
+...     #   beats = componenttools.split_components_at_offsets(staff.leaves, [Duration(1,4)], cyclic=True, tie_split_notes=False)
+...     #   apply_beam_spanner_to_non_rest_beats(beats, brokenBeam = False)
+...     return staff
+... \end{lstlisting}
+
+\caption{Function for creating a staff of random pitches. \index{Function for creating a staff of random pitches.}} 
+\end{figure}
+
+Finally, another set of typographical functions fuses rests and makes uniform the position of short rests on each staff:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def beam_and_fuse_beats_in_score_by_durations(score, durations, cyclic=False, brokenBeam = False):
+...     for staff in score:
+...         beats = componenttools.split_components_at_offsets(staff.leaves, durations, cyclic=cyclic)
+...         fuse_rests_in_staff_by_beats(beats)
+...         beats = componenttools.split_components_at_offsets(staff.leaves, durations, cyclic=cyclic)
+...         apply_beam_spanner_to_non_rest_beats(beats, brokenBeam = brokenBeam)
+... 
+>>> def fuse_consecutive_rests_of_duration_by_duration_threshold(run, duration, durationThreshold):
+...     toFuse = [x for x in run if x.written_duration == duration]
+...     runDuration = componenttools.sum_duration_of_components(run[:])
+...     if durationThreshold <= runDuration:
+...         leaftools.fuse_leaves(toFuse)
+... 
+>>> def fuse_rests_of_duration_in_bar_by_duration_threshold(bar, duration, durationThreshold):
+...     for run in componenttools.yield_topmost_components_grouped_by_type(bar):
+...         fuse_consecutive_rests_of_duration_by_duration_threshold(run, duration, durationThreshold )
+... 
+>>> def fuse_rests_of_duration_in_bars_by_duration_threshold(bars, duration, durationThreshold):
+...     for bar in bars:
+...         fuse_rests_of_duration_in_bar_by_duration_threshold(bar, duration, durationThreshold )
+... 
+>>> def fuse_rests_of_duration_in_score_by_duration_threshold(score, duration, durationThreshold):
+...     for staff in score:
+...         bars = componenttools.partition_components_by_durations_exactly(staff.leaves, [Duration(4,4)], cyclic=True)
+...         fuse_rests_of_duration_in_bars_by_duration_threshold(bars, duration, durationThreshold)
+... 
+>>> def set_vertical_positioning_pitch_on_rests_in_staff(staff, pitch):
+...     for rest in iterationtools.iterate_rests_in_expr(staff):
+...         resttools.set_vertical_positioning_pitch_on_rest(rest, pitch)
+... \end{lstlisting}
+
+\caption{The final stage of typographical adjustment for the rotation section. \index{The final stage of typographical adjustment for the rotation section.}} 
+\end{figure}
+All of the previously defined functions work together in a function that rotates an arbitrary staff of music around a score of x staffs, placing the music on y staffs at any given moment, with keyword arguments that allow bookending, repitching according to a given pitch set, and an arbitrary phase offset to start midway through rotations:
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def rotate_expression_through_adjacent_staffs_at_bandwidth_by_durations(expression, score, staffIndexBoundsTuple, rotationBandwidth, durations, compressedReflections=True, cyclic=False, phaseOffset= 0, soloBookends = False, brokenBeam = False, pitchGroup = [ ]):
+...     matrix = make_cyclic_matrix_for_rotation_by_bandwidth( staffIndexBoundsTuple, rotationBandwidth, compressedReflections )
+...     splits = componenttools.split_components_at_offsets(expression.leaves, durations, cyclic=cyclic, tie_split_notes=False)
+...     splitTuplePairs = pair_pitches_with_splits(matrix, splits, phaseOffset, soloBookends)
+...     add_splits_to_score_by_tuples(score, splitTuplePairs, pitchGroup)
+...     beam_and_fuse_beats_in_score_by_durations(score, [Duration(1,4)],cyclic=True, brokenBeam = brokenBeam)
+... \end{lstlisting}
+
+\caption{The final rotation function. \index{The final rotation function.}} 
+\end{figure}
+
+Utility functions enable this rotation function to put material onto the score:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_empty_cello_score(numStaffs):
+...     score = Score([])
+...     for x in range(numStaffs):
+...         score.append( Staff([]) )
+...         contexttools.ClefMark('bass')(score[x])
+...         score[x].override.beam.damping = "+inf.0"
+...     return score
+... 
+>>> def add_expression_to_staffs_in_score_by_index_tuple(expr, score, indexTuple, brokenBeam = False):
+...     for x in range(indexTuple[0], indexTuple[1]):
+...         copies = componenttools.copy_components_and_covered_spanners(expr[:])
+...         beats = componenttools.split_components_at_offsets(copies, [Duration(1,4)], cyclic = True)
+...         apply_beam_spanner_to_non_rest_beats(beats, brokenBeam = brokenBeam)
+...         score[x].extend( componenttools.copy_components_and_covered_spanners(expr[:]) )
+... \end{lstlisting}
+
+\caption{Utility functions enable rotation. \index{Utility functions enable rotation.}} 
+\end{figure}
+
+At this point, it becomes straightforward to model the succession of events in the score, using the previous functions. First, the program models the first section of music, in which a unison figure rotates throughout the ensemble:
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_rotating_unison_section(score):
+...     unison = make_staff_with_random_pitches([-3, -1, 1], 24)    
+...     add_expression_to_staffs_in_score_by_index_tuple(unison[:-8], score, (0,12) )   
+...     add_expression_to_staffs_in_score_by_index_tuple(unison[-8:], score, (0,1) )
+...     for staff in score[1:]:
+...         staff.append( Rest("r2") )
+...     firstRotationPitches = make_staff_with_random_pitches([-3, -1, 1], 64)
+...     rotate_expression_through_adjacent_staffs_at_bandwidth_by_durations(firstRotationPitches, score, (0,6), 3, [Duration(1,16)], compressedReflections=True, cyclic=True, brokenBeam = True)
+...     for staff in score:
+...         staff.extend("b2 ~ b1 ~ b ~ b2.")
+...     #m9b4
+...     secondRotationLowerPitches = make_staff_with_random_pitches([-3, -1, 1], (13*4) + 6  )  
+...     rotate_expression_through_adjacent_staffs_at_bandwidth_by_durations(secondRotationLowerPitches, score, (6,12), 3, [Duration(1,16)], compressedReflections=True, cyclic=True, phaseOffset = 5, soloBookends = True, brokenBeam = True)
+...     #m13b3
+...     for x in range(6):
+...         del(score[x][-3:])
+...         score[x].append( "r4" )
+...     score[5].pop(-1)
+...     score[5].append("r8. b16")
+...     secondRotationHigherPitches = make_staff_with_random_pitches([-3, -1, 1], 56  ) 
+...     rotate_expression_through_adjacent_staffs_at_bandwidth_by_durations(secondRotationHigherPitches, score, (0,6), 3, [Duration(1,16)], compressedReflections=True, cyclic=True, phaseOffset = 5, brokenBeam = True)
+...     for x in range(6,12):
+...         del( score[x][-2:] )
+...         score[x].append( "r2" )
+...         score[x].append( "r16" * 14 )
+...     #m16b3
+...     add_expression_to_staffs_in_score_by_index_tuple(unison, score, (0,6), brokenBeam = True )
+... \end{lstlisting}
+
+\caption{Modeling the score's first rotation with the rotation function. \index{Modeling the score's first rotation with the rotation function.}} 
+\end{figure}
+
+In the next section, the rotation continues with each moment sounding all three pitches; the rotation function still applies, this time with an optional pitch set argument:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_rotating_pitch_group_section(score):
+...     thirdRotationLowerPitches = make_staff_with_random_pitches([-3, -1, 1], 38  )   
+...     rotate_expression_through_adjacent_staffs_at_bandwidth_by_durations(thirdRotationLowerPitches, score, (6,12), 3, [Duration(1,16)], compressedReflections=True, cyclic=True, phaseOffset = 0, soloBookends = True, brokenBeam = False, pitchGroup = [ -3, -1, 1 ] )
+...     for x in range(0,6):
+...         del(score[x][-2:])
+...         score[x].append( "r16" )
+...     thirdRotationUpperPitches = make_staff_with_random_pitches([-3, -1, 1], 55  )   
+...     rotate_expression_through_adjacent_staffs_at_bandwidth_by_durations(thirdRotationUpperPitches, score, (0,6), 3, [Duration(1,16)], compressedReflections=True, cyclic=True, phaseOffset = 5, soloBookends = True, brokenBeam = False, pitchGroup = [ -3, -1, 1 ] )
+...     for x in range(6,12):
+...         del(score[x][-1])
+... \end{lstlisting}
+
+\caption{Modeling a rotation with multiple simultaneous pitches. \index{Modeling a rotation with multiple simultaneous pitches.}} 
+\end{figure}
+
+Next, the entire ensemble plays a tutti unison; because no rotation occurs, the random selection functions alone model this section of the score:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def generate_random_sixteenth_note():
+...     pitches = [ -3, -1, 1]
+...     chosen = choice(pitches)
+...     return Note( chosen, (1,16) )
+... 
+>>> def generate_n_random_sixteenth_notes(n):
+...     notes = [ ]
+...     for x in range(n):
+...         note = generate_random_sixteenth_note()
+...         notes.append( note )
+...     return notes
+... 
+>>> def add_n_random_sixteenth_notes_to_staff(n, staff):
+...     notes = generate_n_random_sixteenth_notes(n)
+...     staff.extend( notes )
+... 
+>>> def add_n_sixteenth_rests_to_staff(n, staff):
+...     for x in range(n):
+...         staff.extend( "r16" )
+... 
+>>> def add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(n, score, staffTuple):
+...     staffIndexes = range(staffTuple[0], staffTuple[1])
+...     staffSet = set(staffIndexes)
+...     allStaffs = set( range(len(score)) )
+...     silentSet = allStaffs - staffSet
+...     for staffIndex in staffIndexes:
+...         add_n_random_sixteenth_notes_to_staff(n, score[ staffIndex ] )
+...     for staffIndex in silentSet:
+...         add_n_sixteenth_rests_to_staff(n, score[ staffIndex ])
+... \end{lstlisting}
+
+\caption{Modeling the tutti section with randomly selected sixteenth notes. \index{Modeling the tutti section with randomly selected sixteenth notes.}} 
+\end{figure}
+
+Using these functions, the tutti section can be encapsulated into a single function:
+
+\begin{figure}
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_tutti_pitch_group_section(score):
+...     rightSide = (0,6)
+...     leftSide = (6,12)
+...     tutti = (0, 12)
+...     add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(40, score, tutti )
+...     add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(6, score, rightSide )
+...     add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(5, score, leftSide )
+...     add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(4, score, rightSide )
+...     add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(6, score, leftSide )
+...     add_n_random_sixteenth_notes_to_staffs_in_score_by_index_tuple(31, score, tutti )
+...     beam_and_fuse_beats_in_score_by_durations(score, [Duration(1,4)],cyclic=True)
+... \end{lstlisting}
+
+\caption{The tutti section as single function. \index{Modeling the tutti section with randomly selected sixteenth notes.}} 
+\end{figure}
+
+The first ``diatonic'' section of the score, comprised of the first twenty-nine measures of music, may now be encapsulated in a single function:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_diatonic_section(score):
+...     make_rotating_unison_section(score)
+...     make_rotating_pitch_group_section(score)
+...     make_tutti_pitch_group_section(score)
+... \end{lstlisting}
+
+\caption{The first section of the score as a single encapsulation. \index{The first section of the score as a single encapsulation.}} 
+\end{figure}
+The next section of the music appears to be based on a random walk. It has been modeled using a weighted choice from a list of possible intervals; the probability weights were adjusted in a process of trial and error to approximate the published result:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_weighted_choice_from_list( theList ): #makes a weighted choice (by Kevin Parks at snippets.dzone.com)
+...     n = uniform(0, 1)
+...     for item, weight in theList:
+...         if n < weight:
+...             break
+...         n = n - weight
+...     return item
+... 
+>>> def choose_interval_change_from_weights(pitchWeights):
+...     interval = make_weighted_choice_from_list(pitchWeights)
+...     octave = make_weighted_choice_from_list( [(0, .95), (1, .05)] )
+...     if octave:
+...         interval += 8
+...     down = make_weighted_choice_from_list( [(0, .5), (1, .5)] )
+...     if down:
+...         interval = interval * -1
+...     return interval
+... 
+>>> def choose_pitch_based_on_previous_pitch(previous, changeWeights, pitchWeights):
+...     change = make_weighted_choice_from_list( changeWeights )
+...     if change:
+...         chosen = choose_interval_change_from_weights(pitchWeights)
+...         return chosen
+...     else:
+...         return previous
+... \end{lstlisting}
+
+\caption{Weighted probability choice functions for the first random walk section. \index{Weighted probability choice functions for the first random walk section.}} 
+\end{figure}
+
+Because the random pitch walk might cause a given part to wander lower or higher than the perceptual boundaries of its initial clef's ledger lines, the program reviews the pitches resulting from the selected intervals to automate clef switching:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_from_to_interval_tuples_from_expr(expr):
+...     tuples = [ ]
+...     for x in range( len(expr) -1):
+...         fromPitch = expr[x].written_pitch
+...         toPitch = expr[x+1].written_pitch
+...         interval = pitchtools.calculate_melodic_chromatic_interval(fromPitch, toPitch)
+...         tuple = (fromPitch.chromatic_pitch_number, toPitch.chromatic_pitch_number, interval)
+...         tuples.append( tuple )
+...     return tuples
+... 
+>>> def check_for_change_to_treble(tuple):
+...     fromPitch = tuple[0]
+...     toPitch = tuple[1]
+...     interval = tuple[2]
+...     if interval.number >= 5 and toPitch >= 5:
+...         return 'treble'
+...     else:
+...         return False
+... 
+>>> def check_for_change_to_bass(tuple):
+...     fromPitch = tuple[0]
+...     toPitch = tuple[1]
+...     interval = tuple[2]
+...     if interval.number <= -5 and -5 >= toPitch:
+...         return 'bass'
+...     else:
+...         return False
+... 
+>>> def check_to_from_interval_tuple_for_clef_add(x, tuple, staff):
+...     effectiveClef = contexttools.get_effective_clef(staff[x])
+...     if effectiveClef.clef_name == 'bass':
+...         clef = check_for_change_to_treble(tuple)
+...     else:
+...         clef = check_for_change_to_bass(tuple)
+...     return clef
+... \end{lstlisting}
+
+\caption{Conditional checks to determine a clef change. \index{Conditional checks to determine a clef change.}} 
+\end{figure}
+
+The above functions can then be applied to an expression to add clef changes:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def add_clef_if_needed(x, tuple, staff):
+...     clef = check_to_from_interval_tuple_for_clef_add(x, tuple, staff) 
+...     if clef:
+...         contexttools.ClefMark(clef)( staff[x+1] )
+... 
+>>> def add_clefs_to_expr(expr):
+...     differenceTuples = make_from_to_interval_tuples_from_expr(expr) 
+...     for x,tuple in enumerate(differenceTuples):
+...         add_clef_if_needed(x, tuple, expr)
+... 
+>>> def add_clefs_to_exprs(staffs):
+...     for staff in staffs:
+...         add_clefs_to_expr(staff)
+... \end{lstlisting}
+
+\caption{Applying automatic clef changes to an expression. \index{Applying automatic clef changes to an expression.}} 
+\end{figure}
+
+Then the program adds random walk notes to the staffs in the score:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def choose_pitch_values_from_weights(seedPitch, numNotes, changeWeights, pitchWeights):
+...     pitches = [ ]
+...     previous = seedPitch
+...     for x in range(numNotes):
+...         chosen = choose_pitch_based_on_previous_pitch(previous, changeWeights, pitchWeights)
+...         pitches.append( chosen )
+...         previous = chosen
+...     return pitches
+... 
+>>> def make_n_notes_from_random_pitch_walk(seedPitch, numNotes, changeWeights, pitchWeights):
+...     pitches = choose_pitch_values_from_weights(seedPitch, numNotes, changeWeights, pitchWeights)
+...     notes = [ Note( x,(1,16) ) for x in pitches]
+...     return notes
+... 
+>>> def add_components_from_staffs_to_score(staffs, score):
+...     for x,staff in enumerate(staffs):
+...         copied = componenttools.copy_components_and_covered_spanners(staff.leaves)
+...         score[x].extend(copied)
+...     staff = Staff([])
+...     contexttools.ClefMark('bass')(staff[0])
+...     add_clefs_to_exprs( [staff] )
+...     return staff
+... \end{lstlisting}
+
+\caption{Adding random walk notes to the score. \index{Adding random walk notes to the score.}} 
+\end{figure}
+
+The random walk sections are entered and exited via unison drones which may or may not be inflected with trills. The following functions query whether or not a trill spanner has been attached to a given score component and fuse trill spanners attached to adjacent components:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def trill_spanner_attached_to_component(component):
+...     spanners = spannertools.get_spanners_attached_to_component( component )
+...     for x in spanners:
+...         if isinstance(x, spannertools.TrillSpanner):
+...             return True
+...     return False
+... 
+>>> def fuse_trill_spanners_attached_to_components(left, right):
+...     leftTrill = spannertools.get_the_only_spanner_attached_to_component(left, klass=spannertools.TrillSpanner)
+...     rightTrill = spannertools.get_the_only_spanner_attached_to_component(right, klass=spannertools.TrillSpanner)
+...     leftTrill.fuse(rightTrill)
+... \end{lstlisting}
+
+\caption{Querying and fusing trill spanners. \index{Querying and fusing trill spanners.}} 
+\end{figure}
+
+Next, three functions add three respective materials to a specified staff --- an initial drone (preceding the random walk), a random walk, or a terminal drone (following the random walk):
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def add_in_drone_to_staff(staff, inDroneDuration, trill_in, tie_to_previous):
+...     startLength = len(staff)
+...     endOfBeginningIndex = startLength - 1
+...     beginningOfEndIndex = startLength
+...     inDrone = leaftools.make_tied_leaf(Note, inDroneDuration, pitches = pitchtools.NamedChromaticPitch("b"))
+...     staff.extend( inDrone )
+...     if tie_to_previous == True:
+...         tietools.apply_tie_spanner_to_leaf_pair( staff[endOfBeginningIndex], staff[beginningOfEndIndex] )
+...     if trill_in:
+...         inTrillSpanner = spannertools.TrillSpanner(inDrone[:])
+...         inTrillSpanner.written_pitch = 2
+...     if trill_spanner_attached_to_component( staff[endOfBeginningIndex] ):
+...         fuse_trill_spanners_attached_to_components( staff[endOfBeginningIndex], staff[beginningOfEndIndex] )
+...     if trill_in and not trill_spanner_attached_to_component( staff[endOfBeginningIndex] ):
+...         marktools.LilyPondCommandMark("tieDown")(inDrone[0])
+...         marktools.LilyPondCommandMark("tieUp","after")(inDrone[0])
+... 
+>>> def add_walk_to_staff(staff, walkDuration, changeWeights, pitchWeights):
+...     numSixteenths = walkDuration.numerator * (16 / walkDuration.denominator)
+...     walkNotes = make_n_notes_from_random_pitch_walk(-1, numSixteenths, changeWeights, pitchWeights)
+...     if walkNotes[0].written_pitch < pitchtools.NamedChromaticPitch("c'"):
+...         contexttools.ClefMark('bass')(walkNotes[0])
+...     else:
+...         contexttools.ClefMark('treble')(walkNotes[0])
+...     intermediateStaff = Staff(walkNotes)
+...     add_clefs_to_expr(intermediateStaff)
+...     copied = componenttools.copy_components_and_covered_spanners(intermediateStaff[:])
+...     staff.extend(copied)
+... 
+>>> \end{lstlisting}
+
+\caption{Functions for adding drones and random walks. \index{Functions for adding drones and random walks.}} 
+\end{figure}
+
+Just as a single rotation function added a rotation to the score to generate the first section of the score, the previous functions culminate in two functions that add a ``drone and back'' random walk gesture to a staff and score respectively. The ``startEncroachment'' and ``endEncroachment'' arguments specify the number of sixteenth notes of the random walk through which the drone will continue; that is, if a random walk section of three measures has been chosen, the startEncroachment will continue the preceding drone into the first measure by n sixteenth notes and the endEncroachment will begin the subsequent drone n sixteenth notes before the end of the third measure. Other arguments specify the durations of the initial drone, the random walk section, and the following drone:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def add_drone_and_back_tutti_to_staff(staff, inDroneBaseDuration, startEncroachment, walkBaseDuration, outDroneBaseDuration, endEncroachment, changeWeights, pitchWeights, trill_in=False, trill_out = False, tie_to_previous = False):
+...     startLength = len(staff)
+...     startEncroachmentAsSixteenths = Duration(startEncroachment, 16)
+...     endEncroachmentAsSixteenths = Duration(endEncroachment, 16)
+...     inDroneDuration = inDroneBaseDuration - startEncroachmentAsSixteenths
+...     if inDroneDuration != 0:
+...         add_in_drone_to_staff(staff, inDroneDuration, trill_in, tie_to_previous)
+...     walkDuration = walkBaseDuration + startEncroachmentAsSixteenths + endEncroachmentAsSixteenths
+...     add_walk_to_staff(staff, walkDuration, changeWeights, pitchWeights)
+...     outDroneDuration = outDroneBaseDuration - endEncroachmentAsSixteenths
+...     if outDroneBaseDuration != 0:
+...         spanner = add_out_drone_to_staff(staff, outDroneDuration, trill_out, tie_to_previous, startLength)
+...     if outDroneBaseDuration != 0:
+...         return spanner
+... 
+>>> def add_drone_and_back_tutti_to_score(score, inDroneBaseDuration, startEncroachments, walkBaseDuration, OutDroneBaseDuration, endEncroachments, changeWeights, pitchWeights, trill_in = False, trill_out = False, tie_to_previous = False):
+...     startEncroachments = sequencetools.CyclicTuple( startEncroachments )
+...     endEncroachments = sequencetools.CyclicTuple(endEncroachments)
+...     for x, staff in enumerate(score):
+...         spanner = add_drone_and_back_tutti_to_staff(staff, inDroneBaseDuration, startEncroachments[x], walkBaseDuration, OutDroneBaseDuration, endEncroachments[x], changeWeights, pitchWeights, trill_in, trill_out, tie_to_previous)
+... \end{lstlisting}
+
+\caption{Functions for adding the random walk gesture to score, framed by drones as specified. \index{Functions for adding the random walk gesture to score, framed by drones as specified.}} 
+\end{figure}
+
+The use of this previous function allows a single function to model the random walk section of the score:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_random_walk_section(score):
+...     changeWeights = [ (0, .25), (1, .75) ]
+...     pitchWeights = [ (.5, .14), (1, .35), (2, .35), (1.5, .14), (3, .01), (4, .01) ]
+...     encroachments = range(1,17)
+...     endEncroachments = sample(encroachments, 12)
+...     add_drone_and_back_tutti_to_score(score, Duration(11,4), [1], Duration(4,1), Duration(2,1), endEncroachments, changeWeights, pitchWeights)
+...     encroachments = range(1,33)
+...     startEncroachments = sample(encroachments, 12)
+...     encroachments = range(1,19)
+...     endEncroachments = sample(encroachments, 12)
+...     spanner = add_drone_and_back_tutti_to_score(score, Duration(2,1), startEncroachments, Duration(1,1), Duration(2,1), endEncroachments, changeWeights, pitchWeights, trill_out=True, tie_to_previous = True)
+...     encroachments = range(0,33)
+...     startEncroachments = sample(encroachments, 12)
+...     add_drone_and_back_tutti_to_score(score, Duration(2,1), startEncroachments, Duration(1,1), 0, [0], changeWeights, pitchWeights, trill_in=True, tie_to_previous = True)
+... \end{lstlisting}
+
+\caption{The random walk section as a single function. \index{The random walk section as a single function.}} 
+\end{figure}
+
+Because the previous operations have been executed by adding many small durations to a staff, a metric hierarchy must imposed upon the durations in order for the music to comport with common practice conventions regarding rhythmic division, mainly by fusing chains of many shorter, tied durations into longer durations. (Recent versions of the API have eliminated this step of the process with an object oriented model of metrical hierarchies.) Note that this is the opposite of the previous example, in which longer durations needed to be divided in order to comport with the duration of the piece's meter; the system enables either approach, and the formulation of a procedural strategy must address the relationship between the note as an abstraction and the note as a read symbol that conforms to the conventions of common notation:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def get_quarter_runs_in_group(group):
+...     runs = [ ]
+...     run = [ ]
+...     for leaf in group:
+...         if leaf.written_duration == Duration(1,4):
+...             run.append(leaf)
+...         else:
+...             if run != []:
+...                 runs.append(run)
+...                 run = [ ]
+...     if run != []:
+...         runs.append(run)
+...     return runs
+... 
+>>> def get_quarter_runs_in_expr(expr):
+...     runs = [ ]
+...     for group in componenttools.yield_topmost_components_grouped_by_type(expr):
+...         if isinstance(group[0], Note):
+...             groupRuns = get_quarter_runs_in_group(group)
+...             runs.extend(groupRuns)
+...     return runs
+... 
+>>> def fuse_quarter_runs_in_bar(bar_leaves_in_chain):
+...     runs = get_quarter_runs_in_expr(bar_leaves_in_chain)
+...     for run in runs:
+...         if len(run) > 1:
+...             leaftools.fuse_leaves(run[:])
+... 
+>>> def get_bar_leaves_in_chain(bar, chain):
+...     leaves = []
+...     for leaf in bar:
+...         if bar[0].timespan.start_offset <= leaf.timespan.start_offset and leaf.timespan.stop_offset <= bar[-1].timespan.stop_offset:
+...             leaves.append(leaf)
+...     return leaves
+... 
+>>> def fuse_leaves_if_fully_tied(shard):
+...     if tietools.are_components_in_same_tie_spanner(shard[:]):
+...         leaftools.fuse_leaves(shard)
+... 
+>>> \end{lstlisting}
+
+\caption{Imposing metric hierarchy by fusing chains of small durations. \index{Imposing metric hierarchy by fusing chains of small durations.}} 
+\end{figure}
+
+These functions for fusing culminate in two functions for imposing metric hierarchy on a staff and the entire score, respectively: 
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def fuse_tied_through_quarters_by_bars(chain, bars):
+...     for bar in bars:    
+...         bar_leaves_in_chain = get_bar_leaves_in_chain(bar, chain)
+...         if bar_leaves_in_chain:
+...             fuse_tied_through_quarters_in_bar(bar_leaves_in_chain)
+... 
+>>> def fuse_quarter_runs_by_bars(chain, bars):
+...     for bar in bars:    
+...         bar_leaves_in_chain = get_bar_leaves_in_chain(bar, chain)
+...         fuse_quarter_runs_in_bar(bar_leaves_in_chain)
+... 
+>>> def clean_up_durations_in_staff(staff):
+...     beats = componenttools.split_components_at_offsets(staff.leaves, [Duration(1,4)], cyclic=True)
+...     bars = componenttools.split_components_at_offsets(staff.leaves, [Duration(4,4)], cyclic=True)
+...     for chain in tietools.iterate_nontrivial_tie_chains_in_expr(staff):
+...         fuse_tied_through_quarters_by_bars(chain, bars)
+...     bars = componenttools.split_components_at_offsets(staff.leaves, [Duration(4,4)], cyclic=True)
+...     for chain in tietools.iterate_nontrivial_tie_chains_in_expr(staff):
+...         fuse_quarter_runs_by_bars(chain, bars)
+... 
+>>> def clean_up_durations_in_score(score):
+...     for staff in score:
+...         clean_up_durations_in_staff(staff)
+... \end{lstlisting}
+
+\caption{Imposing metric hierarchy on the entire score. \index{Imposing metric hierarchy on the entire score.}} 
+\end{figure}
+
+The remaining sections of the score could all be modeled similarly: some of the unorthodox notational constructs proved impossible to model using LilyPond without intimate knowledge of the Scheme programming language, which underlies the most basic functions of the typesetting engine. Assuming a valid model of each score section, each section would finally become a constituent line of a function that generates a score object; i. e., with the two previously coded sections:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_windungen_score():
+...     score = make_empty_cello_score(12)
+...     make_diatonic_section(score)
+...     make_random_walk_section(score)
+...     clean_up_durations_in_score(score)
+...     clean_up_rests_in_score(score)
+...     return score
+... \end{lstlisting}
+
+\caption{Creating the score object. \index{Creating the score object.}} 
+\end{figure}
+
+Finally, the score object can be used to initialize a LilyPondFile object, as seen at the end of the P\"{a}rt example, the attributes of which can be specified to change the layout and formatting properties of the completed document (\ref{sec:windungen}).
+
+\section{Revealed Strengths and Weaknesses of Formalized Score Control}
+Although laboriously detailed, this step-by-step description of two modeling tasks makes clear the advantages and disadvantages of this method of notation generation. The P\"{a}rt example shows that the system models low-complexity structures relatively easily, as demonstrated by the small set of generative pitch and rhythm functions that model most of the score; the addition of dynamics and technical markings does not follow a pattern and must be specified in lists, although even these tasks may be automated somewhat with the use of loops, as in the case of rehearsal marks and some technical indications. This suggests that formalized score control most effectively models works with maximum coherence, works that derive their components in an integral way from a minimally small set of generative principles. As the diversity of organizational logics within a work increases, the complexity of a modeling program must scale proportionally. 
+
+Accordingly, the Xenakis example offers a less unanimous view on this method's efficacy. To the modeling process, each shift in texture results in the equivalent of a completely new model of music, and the process of managing the contrasts of one piece becomes the process of modeling many different kinds of musical activity, each of which could result in its own composition. That the system can indeed model each of these varying musical organizations and its accompanying notational comportments is a testament to the flexibility of the system, but one envies the agility with which a more traditional approach to composing facilitates the sudden invention of contrasting material. (It is arguably the case that traditional composition can occur within the system by simply specifying the pitches and durations to be added to score container objects; however, the lack of an underlying model of music/composition guiding the generation of components would locate this in the realm of composition, not analysis/modeling.) In an analysis task, the demand for this kind of rigorous specification leads to a more concrete understanding of which principles of construction might lead to the composition; at the same time, this reveals that traditional musical analysis can be understood as the task of identifying not every single operative constraint, as must be done here, but the most relevant structures and constraints at each moment in a work of music.
+
+It is also the case, from the perspective of musical analysis, that many of the functions here that fuse smaller durations or divide larger durations model the metric conventions of common practice notation rather than symbolic manipulations indigenous to a specific composition. One might argue that these operations remain outside of the realm of analysis, as they ally more closely to a notion of performance practice or notational technology than to the qualities of a work composed within a performance tradition, using a specific notational technology. (They model notation, not music/composition.) One may also argue, in response, that compositional style extends into simple notational choices: the additive rhythms of Olivier Messiaen, for example, extend additive formulations of meter and rhythm into the realm of rhythmic convention by flouting the regular metric division of a bar; likewise, notations that elect to show clearly the way that a beat has been divided communicate through a primarily divisive, rather than additive, view of the relationship between rhythm and meter. Although there might be a disconnect between musical idea and rhythmic convention --- it would be equally possible to convey Messiaen's rhythms with a divisive metric notation --- there is nonetheless a relationship between the two; notational habit countenances compositional thought.
+
+These analytic tasks elide with compositional applications of the system, and the most significant potential of this kind of comprehensive modeling may lie in future compositional applications of musical models derived from analysis: if coding is done with good style, in easily testable and reconfigurable modules, it becomes easy to reuse modeling functions, substituting new values for the function's arguments, in order to create new music, which may or may not resemble the original composition. In this sense, the interplay between composition and analysis, between historical understanding and contemporary creation, has also been formalized, and a unit of code created to understand history can easily be repurposed for the creation of new work.

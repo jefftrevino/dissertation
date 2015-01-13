@@ -1,0 +1,439 @@
+\chapter{A Contextualized History of Object-oriented Musical Notation}
+\section{What is Object-oriented Programming (OOP)?}
+\subsection{Elements of OOP}
+
+Object-oriented programming (OOP) may be understood as an alternative to a previously conventional segregation of \emph{data} --- values expressed with numbers --- and \emph{functions} --- procedures that process data. This older model of \emph{procedural programming} emphasizes the way in which a program accomplishes a task, by sending data through a pipeline of processing functions, much as a recipe describes separately the ingredients and procedures necessary to create a certain dish. Procedural programming approaches a problem by first asking: what must be done, and how might these tasks be analyzed into smaller tasks sufficiently specific for the limitations of the utilized programming language? OOP, on the other hand, emphasizes the agents that take part in the process. It approaches a problem by first asking: what are the actors, agents, and objects involved in this task, and how to they communicate with each other and behave (\cite[5]{Wirfs-Brock:1990ys})?
+
+\subsubsection{An Example: Implementing a Counter with Procedural and Object-oriented Programming}
+In object-oriented programming, data values become object \emph{states} and the functions that process them become object \emph{behaviors}. This means that values and procedures commonly used together have been grouped together into an object. The following example illustrates this fundamental difference between procedural and object-oriented programming.
+
+The problem of managing of a \emph{counter} --- a value to be incremented or decremented to track some aspect of a system --- arises often in the course of music programming: for example, to track the number of measures created in a program designed to make a specified number of measures, a program might repeatedly perform a measure-creating operation and increment a counter to indicate that a measure has been created, until the counter reaches the specified number of measures. To implement such a counter with procedural programming, the programmer might initialize a variable named ``counter'' to hold a value of ``0,''
+
+\begin{ttfamily}
+\begin{scriptsize}
+\textbf{int} counter = 0
+\end{scriptsize}
+\end{ttfamily}
+
+\noindent perform the action to be counted, and then pass the value through an addition function to increment the counter:
+
+\begin{ttfamily}
+\begin{scriptsize}
+counter += 1
+\end{scriptsize}
+\end{ttfamily}
+
+\noindent In this way, the program records the number of measures created in the data value ``counter.'' In this example, data and procedure exist separately in the system: the counter's value exists as a variable, named ``counter,'' and the incrementing procedure exists as a separate function, represented by the symbols ``+=''.
+\\
+In contrast to this procedural approach, for an object-oriented counter implementation, the programmer creates a counter object, with a value that records the object's state (``counter'') and a behavior that increments this value (``inc''):
+
+\begin{ttfamily}
+\begin{scriptsize}
+\textbf{object} Counter:
+
+   \textbf{value} counter
+
+   \textbf{behavior} inc() : counter = counter + 1 
+\end{scriptsize}
+\end{ttfamily}
+
+\noindent To interact with this object, the programmer may query the value of the counter:
+
+\begin{ttfamily}
+\begin{scriptsize}
+Counter.value
+\end{scriptsize}
+\end{ttfamily}
+
+\noindent And the programmer may increment the counter:
+
+\begin{ttfamily}
+\begin{scriptsize}
+Counter.inc()
+\end{scriptsize}
+\end{ttfamily}
+\subsubsection{Data Abstraction and Encapsulation}
+Humans often abstract ideas and perceptions to emphasize meaningful information and suppress irrelevant detail; for example, a map necessarily contains less detail than the navigated landscape to which it corresponds. (\cite[3]{Wirfs-Brock:1990ys}). Likewise, the true detail of a natural environment does not vanish when one uses a map to navigate, and a map can be viewed as a usefully simplified model that affords purposeful interaction with a relatively more complex environment. When interaction with this simplification governs interaction with the environment itself, the map has become an \emph{interface} to the landscape.
+
+The creation of multiple objects with separate internal memories and behaviors in OOP creates an environment in which one object might duplicate the behavior of another object or lack a behavior that characterizes another object; for the object concept to remain meaningful in an environment of multiple, differing objects, one object's memory and behaviors must be accessible only through interaction with that object (\cite[481]{Cardelli:1985oq}). The limitation that an object's internal memory and behaviors may be accessed only via an interface to that object is called \emph{encapsulation} (\cite[18]{Van-Roy:2004uq}), and the broader methodology of segregating the construction of an object from its use is known as \emph{data abstraction} (\cite{Abelson:1983nx}). Because an object's internal construction may only be accessed via the object's interface, the internal construction of an object's behaviors --- the object's \emph{implementation} --- can change drastically, and, if each implementation maintains the same object interface, many implementations will behave identically; this trait is known in the literature as \emph{polymorphism} (\cite[18]{Van-Roy:2004uq}). (This object-oriented definition of polymorphism should not be confused with the literature's use of the term to classify the flexibility of a language's data type handling, as in \cite[472-480]{Cardelli:1985oq}.) For example, the counter object above could be described as above, or in this alternate implementation:
+
+\begin{ttfamily}
+\begin{scriptsize}
+\textbf{object} Counter:
+
+   \textbf{value} counter
+
+   \textbf{behavior} inc() : counter += 1
+\end{scriptsize}
+\end{ttfamily}
+
+\noindent The only difference between these two \code{Counter} implementations is the specific formulation of the \code{inc()} method: in the first implementation, the addition function, in conjunction with an assignment operator, increments the counter's value, while in the second implementation, a single operator, \code{+=}, both increments and assigns the value. This difference remains invisible to the user: regardless of the specific implementation of the counter's methods, the interface to the object remains the same, and the programmer may increment the counter by invoking the increment method (\code{Counter.inc()}).
+
+\subsubsection{Problems of Interfaces: Affordances and Transparency}
+An object's interface allows and prevents certain modes of interaction with the object's internal state and behavior. Designer Don Norman proposes the idea of \emph{affordances} to describe the way that an interface's design invites or discourages a certain mode of use (\cite{Norman:2003mz}): boys pull on girls' pigtails, because the shape and height of pigtails affords (invites) pulling. Any technology will afford certain interactions and, consequently, applications of the technology. 
+
+The proliferation of interfaces through data abstraction also presents a trade-off between usability and openness. As Nance and Sargent point out:
+
+\begin{quote}A major consequence of the conjunction of HCI [(Human-Computer Interaction)] with other advances is an ever-increasing user relief from the requirement to have detailed knowledge of the underlying computing technology. The result has greatly expanded the population of productive users of the ubiquitous digital technology. However, a concomitant result is that, unless the user forces revealing actions, the modeling software hides how the function is performed (\cite[164]{nance2002perspectives}).
+\end{quote}
+
+\noindent In the trade-off between technological transparency, on the one hand, and straightforwardness of use, on the other, object-oriented programming trades access to object internals for an interface's affordances. 
+
+\subsubsection{Incremental Data Abstraction via Classes and Inheritance}
+
+A set of data abstractions might address most of the necessary tasks of a given application area, but the programmer will likely need to create new abstractions to meet the challenges of new problems or propose novel solutions to established problems; because a programming language might be used to solve novel problems, languages should simplify the process of creating new abstractions (\cite{Liskov:1974rt}). For example, if two objects are similar, it would be useful to create one object with reference to the other, by describing only the difference between the two. OOP enables this with its system of classes and inheritance.
+
+OOP departs fundamentally from other paradigms by abstracting the idea of a data type. (\cite[18]{Van-Roy:2004uq}). OOP creates objects from templates called \emph{classes}. A class describes a kind of object and includes \emph{attributes}, \emph{methods}, and \emph{properties}. When an object is created from a class, it is an \emph{instance} of the class and \emph{inherits} all of the attributes, methods, and properties of the class; \emph{inheritance} defines new abstractions as incremental extensions of existing abstractions and allows the user to create a new object by describing only the difference between the old and new objects. To say that some new class (known variously as a \emph{derived class}, \emph{child class}, or \emph{subclass}) \emph{inherits} from an existing class is to say that the new class contains its own hidden, encapsulated version of the methods, attributes, and properties of the class from which it derives (known variously as the \emph{base class}, \emph{superclass}, or \emph{parent class}). Class attributes might be initialized uniformly, through the specification of a default value in the class definition itself, or individually, when the specific object is \emph{instantiated} from the class. For example, to instantiate an object from the Note class in the Abjad API for Formalized Score Control (Ba\v{c}a, Oberholtzer, and Ad\'{a}n, 1997-present), the programmer must supply a pitch and duration attribute to the \code{Note()}function, which instantiates an object from the Note class:
+
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> a_note_object = Note( "c'", (1,4) )\end{lstlisting}
+
+
+
+\noindent Named a\_note\_object, this object inherits all of the attributes, methods, and properties from its instantiating class:
+
+\begin{scriptsize}
+\begin{ttfamily}
+note.descendants
+
+note.duration\_multiplier
+
+note.leaf\_index
+
+note.lilypond\_format
+
+note.lineage
+
+note.multiplied\_duration
+
+note.note\_head
+
+note.override
+
+note.parent
+
+note.parentage
+
+note.preduration
+
+note.duration
+
+note.prolation
+
+note.set
+
+note.sounding\_pitch
+
+note.spanners
+
+note.start\_offset
+
+note.stop\_offset
+
+note.storage\_format
+
+note.timespan
+
+note.written\_duration
+
+note.written\_pitch
+
+note.written\_pitch\_indication\_is\_at\_sounding\_pitch
+
+note.written\_pitch\_indication\_is\_nonsemantic
+\end{ttfamily}
+\end{scriptsize}
+
+\noindent Every note object instantiated from the Note class inherits the same set of attributes from its instantiating class. The arguments given to the \code{Note()} function have supplied values for several of these attributes; for example, this specific object has a written pitch equal to middle C and a duration of one quarter note; this can be seen by querying the object's \code{written\_pitch} and \code{duration} attributes:
+
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> a_note_object.written_pitch
+NamedChromaticPitch("c'")
+>>> a_note_object.duration
+Duration(1, 4)\end{lstlisting}
+
+\subsection{A Nosebleed History of OOP}
+\subsubsection{Cybernetics}
+During and in the decade following World War II, scientists formulated mathematical models of communication, cognition, homeostasis, and biological systems (\cite{Aspray:1985uq}). Shortly after the end of the war, \emph{cybernetics} --- a term coined by Norbert Wiener in 1948 --- emerged as an academic field organized around the study of command and control dynamics, the design and analysis of systems, and analogies between organisms and machines, including computers (\cite{Dunbar-Hester2009}). While conducting anti-aircraft weaponry research at MIT's Radiation Laboratory in 1943, Norbert Wiener, Julian Bigelow, and Arturo Rosenblueth bifurcated the analysis of human-machine systems into two paradigms: a ``behavioristic'' model that emphasizes the relationship between a system's inputs and outputs and a ``functional'' understanding that emphasizes an understanding of the internal structure and function of objects (\cite{Priestley:2011ve}). While the authors were concerned at the time with illustrating how this ``behavioristic'' understanding of systems allows the uniform analysis of human-machine systems, thus enabling the unified discussion of systems with both human and machine actors and laying the groundwork for cybernetics, this dichotomy between an input-output systems model and an object-based systems model presages the computational models that underlie procedural and object-oriented programming languages respectively. The presence of this dichotomy in the founding work of cybernetics does not demonstrate a clear line of influence between object-oriented programming and cybernetics; rather, it shows that practitioners have acknowledged since the beginning of computation research that a view of programming abstractions as either participants in a processing chain or as communicating objects with encapsulated construction and behavior can lead to divergent views of systems and problems.
+
+\subsubsection{Simulation}	
+	The history of OOP languages begins with the simulation programming languages of the 1960s, of which Simula67 (1967), based heavily on Algol60 (1960), was the first (\cite[489]{Van-Roy:2004uq}). Simulation languages seek to model the behavior of complex systems in order to enhance system performance (\emph{system analysis}), evaluate the performance of systems (\emph{acquisition and system acceptance}), and create artificial environments for research and entertainment (\cite[162]{nance2002perspectives}). Simulation predates computers and began as early as 1777, when Buffon estimated the value of $\pi$ by dropping a needle onto strips of wood --- not far afield from this initial experiment, the first computer simulations were ``Monte Carlo'' models, a technique for modeling complex systems that uses deterministic inputs to constrain and measure a random distribution: i.e., to estimate the value of $\pi$, circumscribe a circle inside a square, place points randomly and uniformly within the square, and then measure the ratio of the number of points inside the circle to the total number of points to derive the value of $\pi$ (\cite[162]{nance2002perspectives}). From the perspective of user interaction, a simulation language allows the user to describe the elements of a system, their attributes, their permissible logical relationships, and the time-dependent processes that govern the behavior of the system (\cite{Kiviat:1993fj}). Simulation languages contribute several key concepts to OOP, as well as to computer science more broadly: Simula (1965) proposed that a section of code represent a ``quasi-independent'' process; SIMSCRIPT II (1968) introduced an \emph{entity/attribute/set} concept, by which entities could be both members of sets and unique objects with their own attributes; and Simula67 extended this model by introducing the key concepts of data types, inheritance, encapsulation, and message passing between entities (\cite[167]{nance2002perspectives}). 
+
+\subsubsection{Structured Programming}
+In the 1960s, \emph{structured programming}, in which sequentially specified and grouped operations describe the order in which the program processes data values, became an industry best practice, and professionals warned against programming habits that decoupled the sequence of execution from the order in which procedures have been specified; as Edsger W. Dijkstra recommends in his famous letter to the editor, ``Goto Statement Considered Harmful'':
+
+\begin{quote}
+...[W]e should do (as wise programmers aware of our limitations) our utmost to shorten the conceptual gap between the static program and the dynamic process, to make the correspondence between the program (spread out in text space) and the process (spread out in time) as trivial as possible (\cite{Dijkstra:1968ul}).
+\end{quote}
+
+Dijkstra continues to decry the use of the ``goto'' statement, a programming device that allows programmers to leap to specified line of code in the written program, thus specifying a sequence of code execution that differs substantially from the written, visual order of commands and makes the analysis and evaluation of programs more difficult. Beyond the specific goal of revising contemporary programming habits, this call for the elimination of a ``gap'' between the static nature of code and the dynamic nature of the data processing it enables sets the conceptual stage for an object-oriented approach that emphasizes the cooperation of variously static or dynamic objects that interact with one another, while enabling programmers to conceptualize a task as a sequence of processing functions that act upon data values.
+
+\subsubsection{Other Influences}
+Other research areas and trends contributed to the formation of object-oriented paradigms. Knowledge representation languages (such as KRL, KEE, FRL, and UNITS) for Artificial Intelligence engaged discrete state simulations with a knowledge theory based on Minsky's concept of ``frames,'' while ACTORS and FLAVORS (both 1981) developed message passing and multiple inheritance respectively (\cite{stefik1985object}). Several object systems were added to the LISP language widely used in AI between the late 70s and late 80s (\cite{Bobrow:1986qf}), and the self-defining organization of LISP inspired the definition of object-generating classes as objects themselves in Smalltalk during the 1970s (\cite[575]{Kay:1996vn}). As more efficient time-sharing mainframes defined the metaphors of personal computing in the 1960s, computers modeled users as interacting agents with states and behaviors, and \emph{recursive design} allowed operating systems to model themselves, creating a number of \emph{virtual machines} that each encapsulated the computation abilities of the mainframe computer itself (\cite{Creasy:1981ys}).  Metaphors of time sharing and the ``master''/``instance'' data model of Ivan Sutherland's pioneering drawing program and interface SKETCHPAD (\cite{Sutherland:1964zr}) both influenced the development of Smalltalk in the 1970s (\cite[575]{Kay:1996vn}) --- although no more than speculation, Smalltalk creator Alan Kay was a professional jazz guitarist before entering college, and musical abstractions such as scales and chords may also have influenced the development of OOP (\cite[579]{Kay:1996vn}).
+
+\subsubsection{Smalltalk}
+Smalltalk (1980) is the first widely used object-oriented programming language (\cite{Sammet:1991pd}). Created through research directed by Alan Kay at Xerox during the 1970s, many syntactically divergent versions of the language throughout the decade adhered to the same core principles of recursive design:
+
+\begin{enumerate}
+\item Everything is an \emph{object}.
+\item Objects communicate by sending and receiving \emph{messages}.
+\item Objects have their own memory.
+\item Every object is an instance of a \emph{class}, which is itself an object.
+\item The class holds the shared \emph{behavior} for its instances.
+\item Classes are organized into an \emph{inheritance hierarchy}.
+\end{enumerate}
+
+\noindent Evoking Dijkstra's ``conceptual gap,'' the creators of Smalltalk introduced their language to the public as the result of design concerned explicitly with elegant discourse between human and computational models of concepts: 
+
+\begin{quote}We have chosen to concentrate on two principle areas of research: a language of description (programming language) that serves as an interface between the models in the human mind and those in computing hardware, and a language of interaction (user interface) that matches the human communication system to that of the computer (\cite{Ingalls:1981kx}).
+\end{quote}
+
+\noindent To align the conceptual framework of intercommunicating objects with the syntax of their new language, they created an ``object message'' syntax to emphasize that Smalltalk's code directs the flow of communication from object to object. In Smalltalk, if \code{bob} is an integer, the programmer sends an addition message to \code{bob} to change \code{bob}'s value: 
+
+\code{bob +4} 
+
+\noindent If the previous value of \code{bob} had been 3, the new value stored in the object would be 7; if \code{bob} were a string instead of an integer, with a value of \code{``Meta''}, the new value in \code{bob} might be \code{``Meta4''} (\cite{Ingalls:1978fk}).
+
+\subsubsection{Hybrid Languages}
+While Smalltalk is a pure object-oriented language --- everything is an object, including classes --- several \emph{hybrid} programming languages became popular in the 1990s and 2000s. Languages such as C++, Java, Python, and Perl enable OOP but also contain built-in data types, such as integers, lists, and floats (floating-point decimal numbers), that cannot be modified by the user (\cite{Schwarz:1993vn}, \cite{Gosling:2000ly}, \cite{Van-Rossum:2003ys}, \cite{Holzner:1999zr}). These data values must be wrapped in an object instance via inclusion in a class or object attribute or method to participate in the language's class hierarchy; however, the use of such values without OOP enables the basic conventions of structured, procedural programming. Not all of these languages were created to be hybrid languages; Python, for example, began as a completely procedural system and gained object orientation during the course of its development.
+\subsubsection{Proposed Modern Standards of OOP}
+	New applications of a programming language can result from changes of programming style or personal preference (\cite{Sammet:1991pd}). As OOP has gained hegemony in the programming world, authors have proposed and widely circulated ``mental toolkits'': sets of standards and best practices for programming that maximize the advantages of abstraction, encapsulation, and inheritance without introducing problems at later stages in code development or revision. The practice of any of these models as convention promotes a strict understanding of programming style intended to limit the perils and maximize the benefits of OOP. For example, Robert C. Martin has proposed an mnemonic rule-set for class design, SOLID (\cite{Martin:yq}), and Craig Larman has proposed a similar guide to assigning responsibility to objects and classes, GRASP (\cite{Larman:2002gf}). Such guidelines, should they become standard, can substantially influence both the way in which programmers use a given programming language and the way that programmers approach and design solutions to problems. 
+
+\section{Object-oriented Notation for Composers}
+
+\subsection{Composition as Notation}
+Western music's basis in notation implies two kinds of information analysis: graphic specification divides an instruction into perceptually fused but independently specified aspects (pitch, rhythm, dynamic), and segregates event information (notes on the page of the score) from sound production information (instructions for how to play an instrument to produce sound) (\cite[83]{Ariza2005}). While many environments for both notation and sound production have arisen within the last twenty years, the present study concerns itself with systems' efficacy on two fronts: the ability to elegantly express both low- and high-level compositional ideas with the aid of a graphic or text-based programming language and the ability to generate a sufficiently detailed common practice musical notation from the programmed ideas, where sufficiency is assessed with reference to the accepted vocabulary of common practice notational symbols and constructs. Contra taxonomies of computer-aided algorithmic composition (CAAC) environments that have attempted to categorize a much broader set of systems (\cite{Ariza2005b}), the present discussion redefines composition narrowly as the act of programming a computer to create a notation in the form of a document --- although recent practice has shown a healthy willingness to question the technological nature and collaborative context of this document.
+
+Conventional aesthetic assumptions inhibit such a concretist definition of notation, and it is easier to adopt the view that composition is equivalent to notation from the standpoint of a specific aesthetic point of view, advanced in the middle of the twentieth century. While the practice of composition is still conventionally described as a process whereby composers mediate intentions or emotion through a representational technology toward a receiving participant (\cite{Davies:1994qf}), mid-century American composers proposed an alternative approach to the same creative technologies, in which the act of composition exists entirely as the creation of a graphic artifact, despite the assumption that others will pursue sonic responses to the created artifact; as the American composer John Cage asked, ``Composing’s one thing, performing’s another, listening’s a third. What can they have to do with one another?'' (\cite[14]{Cage:2011dq}). This question invites a multiplicity of possible relationships between composer, performer, and listener, and invites the formation of an artistic practice that reconsiders the interrelationship of these three musical roles from first principles. Likewise, Cornelius Cardew's piece, \emph{Treatise} (1963---67), invites the performer to invent correspondences between symbol and action, rather than specifying them via assumed performance practice or explanatory notes. It is in this spirit that the present study circumscribes composition as the creation of a graphic provocation to enacted response, rather than a manifestation of the conduit metaphor of human communication (\cite{Reddy:1979oq}) or a transmitter/receiver model of information (\cite{Shannon:1949tg}).
+
+\subsection{Generative Task as an Analytic Framework}
+Software production exists as an organizationally designed feedback loop between production values and implementation (\cite{Derniame:1999fk}), and it is possible to understand a system by understanding the purpose for which it was initially designed, the system's \emph{generative task(s)}. In the analysis of systems created for use by artists, this priority yields a dilemma instantly, as analyses that explain a system's affordances with reference to intended purpose must contend with the creative use of technology by artists: a system's intended uses might have little or nothing in common with the way in which the artist finally uses the technology. For this reason, the notion of generative task is best understood as an explanation for a system's affordances, with the caveat that a user can nonetheless work against those affordances to use the system in novel ways. Generative tasks --- informed by the cultural milieu of software development, economic constraints of software production, and the aesthetic proclivities of artists participating in development processes --- constrain software features to enable a limited subset of possible representations and user interactions.
+
+While composers working traditionally may allow intuition to substitute for formally defined principles, a computer demands the composer to think formally about music (\cite{Xenakis:1992rq}). Keeping in mind generative task as an analytical framework, it is broadly useful to bifurcate an automated notation system's development into the modeling of music and composition, on the one hand, and the modeling of musical notation, on the other. All systems model both, to greater or lesser degrees, often engaging in the ambiguous or implicit modeling of music and composition while focusing more ostensibly on a model of notation, or focusing on the abstract modeling of music without a considered link to a model of notation. Due to the intimate link between notation and musical ideas, it is impossible for a system that models notation to avoid at least implicitly modeling musical and compositional ideas, and a computational model of music and composition is an inevitable component of every automated notation system, even when it exists as an unspoken set of technological constraints. Generative task explains a given system's balance between computational models of music/composition and notation by assuming a link between intended use and system development.
+
+Automation, as the computational execution of a previously human-executed task, complicates a system's evaluation via generative task, because the tasks might be assumed to be executed by either human or computer. A compositional practice that positions notation as a central element of the creative process may claim that drawn notation by the human hand can never be eliminated from the process of composition (\cite[131]{Hiller:1965}), just as well as it may claim that a computer must model in as detailed a manner as possible the typographical palette and choices of compositional thought through notation; that is, after considering generative task, human-computer interaction must be further considered to arrive at a concrete distribution of tasks between human and machine. 
+
+\subsection{Computational Models of Music/Composition}
+
+Computational models of music might entail the representation of higher-level musical entities apparent in the acts of listening and analysis but absent in the symbols of notation themselves, as determined to be creatively exigent. Programming researchers and musical artists have modeled many such extrasymbolic musical entities, such as large-scale form and transition (\cite{polansky1991morphological}, \cite{uno1994temporal}, \cite{dobrian1995algorithmic}, \cite{abrams1999higher}, \cite{Yoo1983}), texture (\cite{Horenstein:2004kx}), contrapuntal relationships (\cite{Boenn:2009oq}, \cite{Acevedo2005}, \cite{Anders:2011kl}, \cite{Balser:1990tg}, \cite{Jones:2000hc}, \cite{uno1994temporal}, \cite{Bell:1995ij}, \cite{farbood2001analysis}, \cite{Cope:2002fv}, \cite{Laurson:2005dz}, \cite{Polansky:2011fu}, \cite{Ebcioglu:1980kl}), harmonic tension and resolution (\cite{Melo2003}, \cite{Wiggins1999}, \cite{Foster:1995qa}), melody (\cite{Hornel:1993mi}, \cite{Smith:1992pi}), meter (\cite{Hamanaka:2005ff}), rhythm (\cite{Nauert2007}, \cite{Degazio:1996lh}, \cite{Collins:2003bs}), timbre (\cite{Xenakis:1991fu}, \cite{Creasey:1996ye}, \cite{Osaka2004}), temperament (\cite{Seymour:2007qo}, \cite{Graf:2006il}), and ornamentation (\cite{Ariza:2003zt}, \cite{Chico-Topfer:1998jl}). This work overlaps fruitfully with analysis tasks, and models of listening and cognition can enable novel methods of high-level musical structures and transformations, like dramatic direction, tension, and transition between sections (\cite[108]{Collins2009}); the overlap of artistic application with analysis and simulation of cognitive models also causes a muddle of various motivations and methodologies, resulting in a field of research without clear evaluative criteria (\cite{Pearce2002}).
+
+It is possible to model music computationally without recourse to the canonized abstractions above. Mid-century artists pioneered the conflation of signal processing and music composition, architecting systems that regarded compositionally both the spectral and symbolic characteristics of sound; in accordance with modernism's interest in coherence between multiple structural scales, temporal scales, and dimensions (\cite{Stockhausen:1962fu}), both Hebert Br\"{u}n and Iannis Xenakis produced composition systems in which larger structural features emerged from mathematical constraints that generate sound files sample by sample (\cite{Luque2009}, \cite{Brun:1969il}). These systems demonstrate that the persistence of older theories of music is optional in computational models of music: in the works of James Tenney and Larry Polansky, for example, ``mean event time'' and probabilistically determined pitch selection algorithms replace traditional musical abstractions, such as tempo (\cite{Polansky:2010fc}).
+
+One subset of these extra-symbolic musical entities are those musical entities that overlap with concepts in notation. For example, a ``chord'' might be a vertically ordered collection of pitch classes in a harmonic conceit, or it might refer to the specific arrangement of pitched noteheads, stemmed together into a composite notation symbol that instructs a performer to perform a sound that consists of several component pitches. Due to substantial overlap in vocabulary between musical and notational concepts, it can be difficult to separate a system's model of music/composition from its model of notation.
+
+A system that affords a detailed model of music/composition without linking it to a sufficiently detailed model of musical notation does not afford automated notation --- sufficiency, however, depends heavily on generative task. For example, if a composer requires an automated notation system to render complex rhythmic ideas that depend typographically on nested tuplets, a system that produces a notation only via a combination of MIDI and quantization must reduce rhythms to a non-hierarchical stream of event times, eliminating the temporally divisive approach of tuplet notation. For many rhythmic applications, though, MIDI suffices. 
+
+\subsection{Computational Models of Notation}
+
+Many automated notation systems exist to model musical notation and the act of typographical layout without explicitly affording the computational modeling of music or composition (\cite{Smith:1972mw}, \cite{Nienhuys:2003ve}, \cite{Hoos:1998bd}, \cite{hamel1noteability}); many of these systems strongly imply a model of music, such as Gr\'{e}goire for Gregorian chant, Django for guitar tablature, and GOODFEEL for Braille notation (\cite{2006}). In this light, feature-rich systems oriented toward classical composers, such as Finale, Sibelius, SCORE, Igor, Berlioz, and Nightingale fit into the mold of systems that model notation with genre as a primary determinant of generative task. Such a system might go so far as to enable a text-based object-oriented model of notation that automates some aspect of an otherwise point-and-click interface, as in the case of Sibelius's ManuScript scripting language (\cite{Technology:qc}). 
+
+Many models of musical notation were created for purposes of corpus-based computational musicology. Formats such as DARM, SMDL, HumDrum, and MuseData model notation with the generative task of searching through a large amount of data (\cite{Selfridge-Field:1997ud}). Commercial notation software developers attempted to establish a data interchange standard for optical score recognition (NIFF) (\cite{niff1995niff}); since its release in 2004, MusicXML has become a valid interchange format for over 160 applications and maintains a relatively application-agnostic status, as it was designed with the generative task of acting as an interchange format between variously tasked systems (\cite{Good:2001if}).
+
+Notation representations that underly many of these GUI-based systems often go undescribed as computer representations of notation, in favor of discussions about human-computer interaction. For example, Barker and Cantor developed an early model of music notation that underlies a four-oscilloscope GUI and describe their work entirely in terms of user interaction (\cite{cantor1971computer}); likewise, discussions of modern commercial notation systems are primarily front-end oriented, without much awareness or criticism of the underlying computational models of notation.
+
+\subsection{Object-oriented Systems}
+\subsubsection{The Crucial Development of Hierarchical Models}
+Many early models of musical notation were not hierarchical, and Lejaran Hiller, in reflecting on decades of automated notation work, has identified the lack of hierarchical organization as a limitation of early work --- although Nick Collins points out that even Hiller's program PHRASE addresses the hierarchical organization of a score up to the level of a phrase, without moving beyond this mid-level of musical structure to concerns of large-scale form (\cite[108]{Collins2009}). There were several object-oriented music environments by 1990 (\cite[139]{Polansky:1990fk}), most created in or inspired by the newly popular Smalltalk-80 programming language; while they facilitated the hierarchical modeling of musical abstractions, they omitted or radically simplified the hierarchical nature of common notation. For example, Glen Krasner (Xerox Systems Science Laboratory) created Machine Tongues VIII, a music system that created an object-oriented model of the score/orchestra distinction inherited from Max Mathews' Music N languages, with a simple linear model of ``partOn'' and ``partOff'' command sequences (\cite{Krasner:1991uq}), omitting hierarchical organization entirely when the system produces notational output; although subsequent Machine Tongues systems introduced some hierarchical organization via ``note'' objects that inhabited ``event lists,'' systems did not attempt to model the hierarchical detail of all a traditional score's elements. Like Hiller's PHRASE program, Andreas Mahling's CompAss system organized events hierarchically up to the mid-level ``phrase'' level of musical structure (\cite{Mahling:1991qf}). These systems are perhaps best conceptualized as Smalltalk-based interfaces to the MIDI standard: as basic extensions of Smalltalk, they enabled the user to arbitrarily extend the system with new objects, creating a detailed and robust model of music, which was ultimately flattened into a list of noteOn and noteOff commands to be notated or played back via MIDI interface. 
+
+While a hierarchical model of notation and of musical events in time can exist in an entirely object-oriented paradigm, it is possible to observe even in these early systems the need for hybrid procedural/object-oriented approaches for the modeling of musical ideas: somewhat counterintuitively, some of the most important objects in these systems are varieties of transformation, to be enacted upon other objects --- the most important nouns are verbs. HMSL --- a system influenced heavily by James Tenney's work on temporal gestalt perception in music (\cite{Tenney:1980kx}), implemented throughout the 1980s in the Forth language, atop a custom object-oriented extension called ODE (Object Development Environment) --- organizes objects hierarchically according to membership in ``morphs,`` objects that represent morphological changes to be applied to raw data, such as parameterized event data (\cite[139]{Polansky:1990fk}). Likewise, Stephen Travis Pope's MODE (Musical Object Development Environment) included ``line segment'' functions to be applied to event lists to transform the parameters of member objects (\cite{Pope:1991ys}). The central role of transformational objects in these first object-oriented systems presages a later preference for hybrid procedural/object-oriented systems, in which built-in primitive data types --- floating point numbers, strings for representing text, integers --- allowed a variously procedural transformation of data or stateful representation of musical objects. (This tendency might be viewed as the computational persistence of signal generators from modular synthesizers, which allow signals to flexibly modulate other signals.) While procedural programming allows a transformational procedure to be executed, object-oriented programming enables a transformation to exist as an parameterized object, with its own set of attributes. 
+
+By 1989, Glendon Diener's Nutation system (written in Objective C for the NeXT computer) had modeled both musical and notational structure hierarchically through the use of directed graphs (\cite{Diener:1991zr}, \cite{Diener:1991ly}, \cite{Diener:1989ve}). While Diener mentions that users should be theoretically able to extend the system's hierarchical modeling to encompass alternative notation approaches and increasingly detailed models of common notation, the system does not include such a model of notation.
+
+\subsection{Graphical Object-oriented Programming Systems}
+Although realtime languages were available for music synthesis and control as early as 1981 (\cite{Mathews:1981lo}, \cite{mathews1983rtsked}), it took until the middle of the 1990s for realtime, graphical programming environments to become widely used (\cite{Puckette:1991hs}, \cite{Puckette:1996kc}). While these systems specialize in either signal processing for synthesis applications or symbolic processing for automated notation applications, there are both extensions of Max/MSP and PD that enable musical notation (\cite{didkovsky2008maxscore}, \cite{Kelly:2011rw}) and extensions of OpenMusic and PWGL that enable synthesis and control of synthesized sound; notably, the specification of scores in tandem with control parameters for sound synthesis was a generative task in the creation of Pure Data.
+
+IRCAM developed the Crime, CARLA, and Patchwork environments for composition in the second half of the 1980s, and PatchWork was the first object-oriented automated notation environment to catch the attention of established composers, including Brian Ferneyhough, G\'{e}rard Grisey, Magnus Lindberg, Tristan Murail, and Kaija Saariaho (\cite{Assayag:1999sw}); IRCAM developed PatchWork further into the OpenMusic environment, which gained, over the course of a decade of development, an interface to the control of synthesis parameters (\cite{agon2000high}), an interface to physical modeling (\cite{polfreman2002modalys}), analysis applications (\cite{buteau2009melodic}), an interface to feature data (\cite{bresson2010processing}), and a collection of third-party libraries that extend the basic ``boxes'' included in the environment distributed by IRCAM. 
+
+The naturalistic aesthetic agenda of spectralism played an important role as a generative task for these extensions. Composers' needs demanded the integration of signal processing and symbolic manipulation, and the SDIF standard, a sound file analysis interchange data representation standard developed jointly by CNMAT and IRCAM in the second half of the 1990s (\cite{wright1999audio}) had been incorporated into OpenMusic with SDIF-specific classes and methods by 1999 (\cite{schwarz2000extensions}). 
+
+As OpenMusic developed, Mikael Laurson, the creator of PatchWork, was independently developing PatchWork into PWGL (PatchWork Graphical Language) (\cite{Laurson:2003fh}), a system quite similar to OpenMusic in its graphical approach. PWGL adopts a fundamentally different stance with regard to computationally modeling the details of musical notation. While OpenMusic requires export to a typography program to make choices beyond pitches and rhythms, PWGL provides ENP (Expressive Notation Package) for composers who want to work computationally with common notation symbols (\cite{kuuskankare2009enp}). (It should be emphasized that this limited model of notation has not prevented composers from successfully realizing their ideas using OpenMusic, as documented in IRCAM's two-volume review of projects created using their environment (\cite{agon2006om}, \cite{Agon:2008xd}).) PWGL also developed an interface to synthesis parameters (\cite{laurson2005pwglsynth}) and analysis data (\cite{Kuuskankare:dq}, as well as an interface for graphic notation (\cite{kuuskankareconnecting}) and constraint programming (\cite{Laurson:2006oa}). The Meta-score graphical editor combines procedural programming, common notation, and timeline-based event specification into a single GUI (\cite{kuuskankare2012meta}).
+
+\subsubsection{Live and Interactive Notation}
+Some of the most innovative object-oriented musical notation models have been created for applications in which a notation is generated live in realtime with computer assistance, or a pre-composed notation is presented during a performance by means of computer animation. Harris Wulfson's LiveScore system models notation in the Java programming language via NoteStream objects, which each contain a succession of notes, accompanied by text instructions and dynamic markings; in his composition, \emph{LiveScore}, audience participants tune the knobs of a mixer interface to alter the ranges of musical parameters constraining the output of an algorithmic composition engine (\cite{wulfson2007automatic}, \cite{Barrett:2010dq}). Luciano Azzigotti created a similar system in the Processing environment, a simplified dialect of the Java programming language intended to teach artists and designers basic programming skills (\cite{reas2007processing}, \cite{Azziggoti:2012bh}). Throughout the field of music, increased computation power and programming environments tailored to realtime computation have made it easier for composers to creatively refashion notation to satisfy new goals of collaboration and realtime interactivity (\cite{Balachandran:2012cr}). As these new trends are equally likely to engage abstract animation and data representation traditions of information display as they are traditional musical notation, they tend to result in computer models of notation that offer either a simplified set of common practice notational constructs or a novel approach to notation suited to a particular performance application; these applications are a good example of the way in which the set of generative tasks that interest current practitioners may reduce or discard the full range of accepted common practice notational constructs (\cite{Collins:2011nx}).
+
+These new systems cast a distinctly contemporary light on automated notation systems oriented toward a document preparation model of notation production. Whereas computer notation systems could previously agree implicitly to participate in common practice tradition without argument, the proliferation of new approaches to notation in the realm of interactive media marks document preparation systems for common practice notation as definitively conservative technologies. As such, they conceptualize new technology as an assistive technology that aids, enhances, or re-approaches an established notational technology, as opposed to a force for the creation of a radically new paradigm of musical collaboration through graphic media.
+
+\subsubsection{Constraint Solvers}
+
+The most recent trend in the algorithmic development of automated notation programs has been the integration of constraint solvers, which allow the user to describe the result of a process, without describing the means by which the results must be achieved, a paradigm known in computer science as \emph{declarative programming}. A program consists of a descriptive logic, which specifies what to do, and control, which specifies how to do it (\cite{kowalski1979algorithm}); the former is called \emph{declarative programming} and the latter \emph{imperative programming}. Constraint programming is a form of declarative programming, in which the programmer specifies logical constraints that describe the conditions that must be satisfied, without stating exactly how they will be (\cite[749]{Van-Roy:2004uq}); when coupled with an existing imperative language, constraint solvers enable a kind of meta-programming (\cite{lloyd1994practical}). While constraint-solvers depend traditionally on boolean expressions, recent work has devised constraint-specification syntaxes specific to the needs of musical applications, which include arbitrarily chaining the score elements to which constraints apply, as well as specifying constraints that consider relationships between score elements (\cite{anders2008higher}). Constraint solvers have been used to model specific musical structures, such as melodies (\cite{Zhong2005}) and polyphony (a conflation of harmony/counterpoint) (\cite{Courtot:1990gb}), as well as composition more broadly (\cite{Desainte-Katherine:1991mb}). 
+
+An increase in computational power has facilitated the use of constraint solving for complicated musical decisions, and constraint solvers have been integrated into widely used automated notation environments during the last decade. These systems are now fast enough to use in realtime applications (\cite{Anders:2008cq}), as well as in document-oriented notation applications. OpenMusic and PWGL both contain harmonically oriented constraint solvers, and Strasheela is a powerful text-based constraint solver for musical applications (\cite{sandred2010pwmc}); the developers of Abjad are currently integrating a constraint solver that can be arbitrarily applied to any of the components in a graph tree representation of a musical score (\cite{Baca:2013kh}). For the programming composer, the basics of procedural and object-oriented programming might soon be displaced by the careful description of constraints; this development could potentially lower the bar for composer entry into automated notation, because constraint functions as an interface to the automated arrangement of hidden primitive objects and functions, the low-level manipulation of which need not be mastered by the user in order to produce results that meet the specified constraints. Such a system would present a new incarnation of the trade-off between ``user friendliness'' and technological transparency, potentially minimizing the intricacies of procedural programming for composers.
+
+\section{Design Values for Automated Notation Systems, Illustrated with the Abjad API for Formalized Score Control}
+\subsection{The Abjad API for Formalized Score Control}
+Abjad is a mature, fully-featured system for algorithmic composition comprising, at the time of writing, more than 178,000 lines of code divided into 50 public packages, 305 public classes, 1003 public functions and a documented API totaling more than 800 pages. The system is not built to implement any one idea of what composition is. Abjad is instead architected in such a way as to encourage composers, music theorists and musicologists to model and implement their own, perhaps highly idiomatic, understandings of what musical score is and how music is to be written, analyzed and understood. After a survey of existing automated notation systems, the author has come to regard it as an example of several desirable design values: it allows the user to navigate complex score hierarchies with a readable syntax and access to both high-level and low-level symbolic manipulations, it contains a sufficiently detailed object model of common practice music notation, in which the user may automate the placement of any of the modeled notational symbols, its second-order relationship to generated notations affords tweakability, and its basis in the Python programming language affords extensibility. This section introduces the Abjad API and elaborates on these design criteria.
+
+\subsubsection{Abjad Wraps Lilypond}
+Abjad is a Python API that creates formatted Lilypond syntax for the generation of notation by the Lilypond automated music typsetting engine. LilyPond is an automated music typesetting program, created in the C++ and Scheme programming languages (\cite{Nienhuys:2003ve}). Inspired by the deficiencies of computer typesetting work from the last years of the 1980s, LilyPond represents over a decade of research into a text-based interface for the notational constructs of common practice notation, as well as the typographical details and layout of the score as a document (\cite{Schankler:2013mi}). By providing an interface to a sufficiently detailed low-level model of notation, Abjad provides automated access to all the specifics of the score as a document, including typographical details such as a text indications and articulations, as well as format and layout details such as page size and font details.
+
+As a minimal example, the code below creates an Abjad measure and then both encodes and displays the measure via LilyPond, by using the \code{show} function:
+
+\begin{figure}[H] 
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> measure = Measure((5, 8), "c'8 d'8 e'8 f'8 g'8")
+>>> f(measure)
+{
+    \time 5/8
+    c'8
+    d'8
+    e'8
+    f'8
+    g'8
+}
+>>> show(measure)\end{lstlisting}
+
+\includegraphics{images/chapter1-1.pdf}
+
+  \caption{Abjad creates notation by scripting the LilyPond typesetting program. \index{Abjad creates notation by scripting the LilyPond typesetting program.}} 
+\end{figure}
+
+\subsubsection{Inception}
+The code that was to become Abjad began in 1997 and 1998 as the independent work of composers Trevor Ba\v{c}a and Victor Ad\'{a}n. At that time the composers were working with compositional applications of the electroacoustic techniques of granular synthesis and spectral convolution as well as with matrices and other structures from linear algebra, the use of one- and two-dimensional recursive series to model rhythm, and the use of imaging data from graphic input tablets to model geometric transforms of independent musical parameters. The composers found these and many other ideas from group theory, graph theory and computer science to be imminently compositionally useful. But again and again the barrier to the musical exploration of these ideas was found to be the transcription of these objects into the standard notation of musical score (\cite{Baca:2010fk}). 
+
+Ba\v{c}a and Ad\'{a}n have been joined by composer Josiah Oberholtzer as principle architects of the system, and composers, such as the author, have shaped the design of the open-source system by communicating their needs while designing their own compositional applications. Two examples of this feedback between composition and system design follow. 
+
+\subsubsection{Lid\'{e}rcf\'{e}ny}
+Lid\'{e}rcf\'{e}ny is a 15-minute work for flute, violin and piano. The piece is the work of Trevor Ba\v{c}a and was written in 2007---2008.
+During the composition of the piece Ba\v{c}a used Abjad to render hundreds of rhythmic structures as a fully notated score. The composer worked iteratively and selected the best results from each round of output for use as input to the next round of work with Abjad. Estimating two and a half handwritten pages of score an hour, this process would have taken four years to complete by hand.
+
+Also important to the construction of the piece was the implementation of the Spanner class. The spanner is a structural component unique to Abjad. Spanners play the role of hierarchy-breaking objects that cross over tree-like parts of the musical score. Ba\v{c}a took inspiration for the Abjad spanner from legal publications that posit the idea of a neomedieval overlapping of legal systems in the emergent transnational institutions of the European Union. The Spanner class is now included in the Abjad public library.
+
+The rhythmic construction of Lid\'{e}rcf\'{e}ny shows how the iterative and transcriptional work that Abjad does well can be leveraged in such a way as to reserve the work of creative elaboration for the composer. And the object-oriented flexibility of Abjad made it possible to combine ideas from computer science and jurisprudence in the writing of a piece of music.
+
+\subsubsection{Aurora}
+Aurora is a work for 22-voice string orchestra by Josiah Wolf Oberholtzer. It was commissioned in 2011 by Berlin’s Ensemble Kaleidoskop for a festival commemorating the 10th anniversary of Iannis Xenakis’s death. The composer had two main interests when architecting the piece. First, it should be composed of massed clouds of overlapping material, clouds which could permeate, mask or otherwise be superpositioned relative one another. Second, the atoms comprising those massed clouds would be conceived not principally as streams of pitches and rhythms, but as small series of microgestures built from the conglomeration of classes representing idiomatic string techniques. Each instrumental line in Aurora results from multiplexing the traces from each cloud containing that instrument into a single stream, allowing a performer to participate in different composition processes from moment to moment.
+
+Oberholtzer developed the Abjad timeintervaltrees API to accomplish this large-scale formalization. The interval tree is an ordered collection of absolutely-positioned blocks of time to which arbitrary data can be attached. Interval trees can be scaled, split, shifted and exploded without regard for instrumentation or meter because interval trees model the metascore positioning of musical material. Working with Abjad interval trees allows composers to work with large amounts of material that can be rendered as publication-quality notation later in the compositional process.
+
+\subsection{Design Recommendations}
+
+\subsubsection{A Sufficiently Detailed Model of Notation}
+In 1971, Cantor writes, ``A full display editor for music would take years to develop, with unforeseen difficulties along the way. To begin, one should construct and use an editor for the notation of some small repertoire'' (\cite[107]{cantor1971computer}). The perilous recommendation that notation should be modeled gradually, moving on to more advanced constructs later, rather than creating at the outset a representation that enables both simple and complicated notational constructs, has left even 21st-century notation editors with overly simple models of notation. Even the most sophisticated commercial editors, for example, advance a model of music in which the measure acts as a system atom, despite the presence of non-mensural notational constructs in every period of notated musical history. 
+
+\subsubsection{Readable Navigation of a Hierarchically Organized Score}
+Because a score is necessarily a hierarchical arrangement of symbols, the user needs fluid access to a robust object system, the various levels of the hierarchy in which the symbols have been organized, and the ability to filter collections of objects based on the comparison of their properties. Anything else is an impoverished interface to the basically symbolic nature of musical notation --- anything else, at least, from a conventional aesthetic viewpoint that prioritizes controlled expression over unpredictability and chance (\cite{Gurevich:2007qe}). In line with the cognitive priorities of Djikstra and Kay, these goals should be accomplished in as conceptually elegant a way possible, with a programming syntax that closely aligns with the patterns of human thought in this area of application. Stated from the perspective of the user, rather than the designer, this means that the user must be able to forget, re-approach, and newly understand the function of code. ``Readability'' is paramount for the execution of large projects and to some extent at every moment of the feedback loop between coding and thought. Different programming languages afford readability differentially: Python's syntax, for example, conflates scope with indentation, enforcing through its syntax a convention of good programming style. The simple presence of structured ``white space,'' such as indentation and blank lines, has been shown to increase code readability more effectively than even comments, the first resort of programmers concerned with documenting their code effectively for others (\cite{Buse:2010uq}). The criss-crossing patch cords of graphical programming languages encourage write-only code, while enabling rapid prototyping, and even the syntax of the most elegant object-oriented languages can decrease the readability of code due to the cumbersome task of navigating a hierarchy of symbols. 
+
+Consider the difficulties of the following common notational task --- that of adding phrasing slurs to groups of notes and chords surrounded on either side by a succession of rests (as in Figure 1.2).
+
+\begin{figure}[h] 
+\centering
+\includegraphics{images/chapter1-2.pdf}
+
+\caption{Rest-delimited notes and chords.\index{Rest-delimited notes and chords.}} 
+\end{figure}
+
+Described as a cognitive process, the task might be described in two simple steps: 1) segregate the symbols on the staff into groups of rest and non-rest symbols; 2) add a slur to each non-rest group of symbols. While this first step takes a matter of seconds for the gestalt grouping abilities of the human perceptual system (\cite{Quinlan:1998ov}), it can be a laborious process for an automated notation system. 
+
+\begin{figure}[h] 
+\code{
+(let (group) (dolist (voice (collect-enp-objects score :voice))
+
+(dolist (chord (collect-enp-objects voice :chord)) (if (rest-p chord)
+
+(progn (when (cdr group)
+
+(insert-expression (reverse group) expression)) (setq group NIL))
+
+(push chord group)))))
+}
+\caption{Code to slur groups of rest-delimited notes and chords in PWGL/ENP.\index{Code for slurring note/chord groups in PWGL/ENP.}} 
+\end{figure}
+
+In PWGL's ENP, the code in Figure 1.3 adds slurs to rest-delimited, mixed groups of notes and chords. Although the code refers clearly to the elements of common notation --- names like ``chord'' and ``score'' indicate that the user has access to a representation of the score --- its many nested, parenthesized arguments do not elegantly map to the plain-language description of procedures above. This is largely because the code's syntax introduces a collection of metaphors foreign to the two verbs of the simple description --- the succession ``group'' and ``slur'' from the original formulation has become ``collect,'' ``collect,'' ``insert,'' ``reverse,'' ``set,'' and ``push'' --- with the effect of complicating the operation beyond its necessary complexity.
+
+Data abstraction can help reduce syntactic clutter and align the language of code with the language of concept. Abjad's built-in iteration functions leverage Python's ability to iterate through lists of symbols, resulting in the following elegant syntax for the above task:
+
+\begin{figure}[h] 
+\centering
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> staff = Staff( r"\times 2/3 { c'4 d' r } r8 e'4 <fs' a' c''>8 ~ q4 \times 4/5 { r16 g' r b' d'' } df'4 c' ~ c'1" )
+>>> for group in componenttools.yield_groups_of_mixed_klasses_in_sequence(staff.leaves, (Note, Chord)):
+...     spannertools.SlurSpanner(group[:])
+... 
+SlurSpanner(c'4, d'4)
+SlurSpanner(e'4, <fs' a' c''>8, <fs' a' c''>4)
+SlurSpanner(g'16)
+SlurSpanner(b'16, d''16, df'4, c'4, c'1)
+>>> show(staff)\end{lstlisting}
+
+\includegraphics{images/chapter1-3.pdf}
+
+\caption{Slurred groups of rest-delimited notes and chords.\index{Slurred groups of rest-delimited notes and chords.}} 
+\end{figure}
+
+Using a ``for'' loop, Python groups the leaves (rests, skips, notes, and chords) of a staff container (the function's first argument) by segregating leaves into groups that consist exclusively of notes and chords and groups that do not (the second argument), and then iterates through each note/chord group, slurring each. The language of the code aligns well with the plain language task description, and there are essentially two operations: ``group'' (or more accurately, ``for group in groups,'') and ``slur.'' 
+
+\subsubsection{Transparency Affords Tweakability and Extensibility}
+
+Low-level control over typographical detail and high-level procedural manipulation are seldom found in the same system: many commercial notation programs offer exquisite low-level interfaces without any high-level procedural abilities, and many of the most widely used systems offer an impoverished set of or interface to the symbols of common practice notation. Integrated low- and high-level control over notational symbols encourages two important benefits of technological transparency in the input and output of the system: \emph{extensibility} and \emph{tweakability}. Extensibility assumes that understanding of the low-level construction of a system might enable extensions to the system, to afford new applications or more flexible alignment between thought and individual programming style, while tweakability --- related especially to the system's output --- allows the programmer to engage in low-level manipulations of materials generated by higher-level specifications.
+
+Tweakability is a persistent issue in automated notation systems, and many notation systems create workflows that invite the user to address either high- or low-level symbolic manipulations. Because Abjad wraps LilyPond and extends an interpreted language that can be used live in a terminal, the system affords a wide variety of uses. Adopting the paradigms of creativity offered by McLean and Wiggins (\cite{McLean2010}), a ``planner'' user might elect to write a program that generates the entire composition, as is the case with Josiah Oberholtzer's string ensemble composition, \emph{Aurora} (\cite{Oberholtzer:2010kx}), while a ``bricoleur'' user might generate LilyPond syntax live in the interpreter, copying and pasting into a LilyPond document to be meticulously tweaked at a note-by-note level. The system affords note-by-note composition, totalized algorithmic composition, and many hybridized approaches between these extremes.  
+
+Extensibility is an important design value, both as it applies to the user's ability to extend a system and the ability of a system to integrate diverse, extant modules of code. The relevance of extensibility to the user's experience depends heavily on the difference between the system interface offered to its programmers and to its users: if users engage the system with the same knowledge model as programmers, extensibility in this sense is highly relevant; for systems with a large knowledge asymmetry between programmer and user, extensibility has been romanticized to the point of assuring that amateur programmers will be able to achieve expert results (\cite{Standish:1975gd}). Many automated notation environments assume that their users are programming composers rather than composing programmers, and a large information asymmetry often exists between programmer and user. Even in modern systems touted as object-oriented, users cannot take advantage of the ability to create new classes in the system, because the system's documentation is oriented exclusively toward the use of existing system classes, rather than their extension or modification. 
+
+A second understanding of extensibility is perhaps more relevant to programming for artistic applications. In an age with a surfeit of extant code, the concept of extensibility can be rehabilitated as an assessment of a system's ability to integrate modules of code written in diverse languages and for diverse applications. Such an evaluation is especially relevant to artistic creativity, a realm of activity fraught with interdisciplinary bricolage; for example, recent work in computer-aided algorithmic composition proves that the practice of borrowing concepts and mathematical equations from scientific fields for novel musical applications remains alive and well (\cite{Magnus2010}; \cite{Washka:zp}; \cite{Zad2005}; \cite{Acevedo2005}; \cite{Gartland-Jones2003}; \cite{Phon-Amnuaisuk1999}; \cite{Wiggins1998a}; \cite{MIRANDA2007}; \cite{Burraston2004}; \cite{Kroger}; \cite{Laine1988}; \cite{Hornel}; \cite{Melo2003}; \cite{Spicer2004}; \cite{Luque2009}; \cite{Peters2010}; \cite{essl2006circle}). 
+
+With a priority of freely integrating ideas and code from disparate realms of inquiry, languages can be meaningfully evaluated as relatively disciplined. For example, the LISP programming language remains popular in the fields of Artificial Intelligence, Linguistics, and Music, while science and design disciplines have embraced modern object-oriented languages. Given the manifold needs of programming artists, successful integration is requisite for a suitably flexible environment, and a system's interoperability and breadth of use play an important role in the artistic limitations of a system; the Python language, for example, has demonstrated success as ``glue'' between various languages and application domains (\cite{Sanner:1999rp}). As a language gains a reputation for flexible interoperability, programmers create utilities for this language that further increase the language's abilities in this realm (\cite{beazley1996swig}).
+
+The openness of a software environment also constrains extensibility, and the interfaces of open-source software development encourage software extensibility. Fees and licenses can prevent users from making valuable contributions. For example, although IRCAM's OpenMusic is open source in one sense --- the code can be freely downloaded and revised --- the language's basis in LispWorks Common Lisp requires that third party developers buy a license to compile OpenMusic for the testing of additional libraries; this has been a notable barrier to the anarkomposer project, an open-source tool for flexible input/out across automatic notation systems (\cite{Echevarria:2013yj}, \cite{:km}). As an entirely open-source project in an online code repository, with (Sub)version (SVN) version control and class docstrings that integrate code testing and documentation via Sphinx/ReST (\cite{:sphinxReST}), Abjad streamlines the process of user contribution. 
+
+\subsubsection{Enabling High-/Low-level and Procedural/Object-oriented Automation}
+By allowing as much technological transparency as possible, with the goal of ensuring extensibility and tweakability, a system should allow a composer to specify both higher-level relationships that lead to notated results and lower-level procedures that place each notational symbol, one at a time, as desired. (It is conceivably the case that a notational practice might consist entirely of the formalization of the number and position of musical symbols, as has been suspected of the composition of Erik Satie's \emph{Vexations} (\cite{Orledge1998}). To solve a given problem, a programmer might think of a number of interacting agents, a mill-like succession of inputs and outputs, or some combination of the two, all embroiled in the infinite field of metaphor that informs and underlies human thought (\cite{Lakoff1980}). This is especially true in musical thought, in which entire theories of music can theorize the same basic elements as dynamic processes or stable entities (\cite{Berger:1994bs}). This fluidity makes it essential to enable meta-formalizations that place procedural and object-oriented conceptions of the same material into discourse with one another; for example, a sequence of pitches might be considered in time, as an unfolding pattern, as well as out of time, as a structure with characteristics, and the outputs of these two models might usefully inform one another to create contextually aware processes (\cite{Hedelin2008}); multiple statistical models of the same musical elements might influence the production of the notation (\cite{Pearce2005}). For this reason, the musical programmer should be able to accomplish tasks with a flexible mix of procedural and object-oriented programming, as afforded by hybrid programming languages like LISP, Java, and Python. While several systems allow the user to define new procedures, based on built-in objects and classes, it remains unclear in most systems how the user might instantiate new classes. 
+
+The performance of contemporary music can be a complicated physical task, and notation often describes physical gesture or position through the use of tablature (\cite[143]{Rastall:1983zr}); recent work has begun to integrate the constraints of the human hand with the composition of music in automated contexts (\cite{Truchet:2004ys}). As an example of low-level typographical control enabled by both procedural and object-oriented thought, consider the creation of an alternative woodwind fingering diagram, as required for the description of multiphonic sounds in contemporary composition (\cite{Backus:1978fv}).   
+
+\begin{figure}[h] 
+\centering
+\includegraphics{images/chapter1-4.pdf}
+
+\caption{A multiphonic notation, including a woodwind diagram.\index{A multiphonic notation, including a woodwind diagram.}} 
+\end{figure}
+
+As important as the visual depiction of physical contact with instruments has become for contemporary notation practice (\cite{Alberman:2005dz}, \cite{Cassidy:2004fu}, \cite{Kanno:2007kl}), no automated notation system has developed an interface for creating woodwind diagrams. For this reason, the user must extend the system by writing new code; however, in most systems, access to document preparation and low-level typographical operations remain too hidden to allow the user to do this. Because Abjad wraps the LilyPond typesetting package, the author was able to create a new Python interface to Mike Solomon's LilyPond woodwind diagrams (2010). As demonstrated in the code appendix, the above diagram can be implemented variously as a procedure that acts on lists of keys to depress, written with only built-in string manipulation functions from Python's standard library (\ref{sec:wwFunction}), as a procedure written more economically with scheme syntax functions from Abjad's schemetools library, (\ref{sec:wwSchemeFunction}), and lastly with object-oriented programming as a documented WoodwindDiagram class (\ref{sec:wwClass}).
+
+In addition to the above extensibility, the system preserves tweakability: the LilyPond format of the above diagram is easily accessed for copying, pasting, and tweaking, using the \code{f()} (format) function:
+
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> f(fingering)
+\woodwind-diagram #'clarinet #'((cc . (one two three five)) (lh . (R thumb)) (rh . (e)))\end{lstlisting}
+
+
+\noindent This notational interface is relatively automated, in that it creates a diagram representing all of the instruments keys, without demanding that the user specify the positions of each constituent filled or unfilled shape; however, the user retains control of low-level visual details, with the use of graphic overrides, and can alter the symbolic or graphical representation of the instrument's keys (the \code{graphical} markup command), the size of the diagram (the \code{size} markup command), and the thickness of the lines used to render the diagram (the \code{thickness} markup command):
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> not_graphical = markuptools.MarkupCommand('override', schemetools.SchemePair('graphical', False))
+>>> chord = Chord("e' as' gqf''", (1,1))
+>>> fingering = instrumenttools.WoodwindFingering('clarinet', center_column=['one', 'two', 'three', 'four'], left_hand=['R','cis'], right_hand=['fis'])
+>>> diagram = fingering()
+>>> graphical = markuptools.MarkupCommand('override', schemetools.SchemePair('graphical', False))
+>>> size = markuptools.MarkupCommand('override', schemetools.SchemePair('size', .5))
+>>> thickness = markuptools.MarkupCommand('override', schemetools.SchemePair('thickness', .4))
+>>> markup = markuptools.Markup([graphical, size, thickness, diagram], direction=Down)
+>>> markup.attach(chord)
+Markup((MarkupCommand('override', SchemePair(('graphical', False))), MarkupCommand('override', SchemePair(('size', 0.5))), MarkupCommand('override', SchemePair(('thickness', 0.4))), MarkupCommand('woodwind-diagram', Scheme('clarinet'), Scheme([SchemePair(('cc', ('one', 'two', 'three', 'four'))), SchemePair(('lh', ('R', 'cis'))), SchemePair(('rh', ('fis',)))]))), direction=Down)(<e' as' gqf''>1)
+>>> staff = Staff([chord])
+>>> contexttools.InstrumentMark('Bb Clarinet', 'clar.')(staff)
+InstrumentMark(instrument_name='Bb Clarinet', short_instrument_name='clar.')(Staff{1})
+>>> score = Score([staff])
+>>> lilypond_file = lilypondfiletools.make_basic_lilypond_file(score)\end{lstlisting}
+
+
+\begin{figure}[h!] 
+\centering
+\includegraphics{images/chapter1-5.pdf}
+
+\caption{Graphic overrides change the appearance of a woodwind diagram.\index{Graphic overrides change the appearance of a woodwind diagram.}} 
+\end{figure}
+
+\subsubsection{Document Preparation}
+When evaluated by a conservative schema --- that an OOP system for notation should provide an object-oriented interface to as thorough a model of common practice notation as possible and should enable the composer to control algorithmically the layout and formatting of the score as a printable document, before proceeding to newer models of composer-technology interaction --- most systems perform poorly. Musical notation is graphic, and manual control over the visual aspect of a notation is necessary from the outset (\cite{Dannenberg:1993bh}). A system should be able to cleanly bridge the gap between composing and document preparation, with algorithmic control over the parameters of the document; however, much of the automated notation work from the last twenty years postpones the most important typographical and formatting choices until after translation into a format appropriate for a musical typesetting program, requiring an export to MIDI, MusicXML, or Lilypond before choices about dynamics, articulations, document formatting, and document layout can be specified. This is not a problem if composition is fundamentally the determination of pitches and rhythms; if anything besides these two musical parameters could potentially occupy a status other than decoration, then an alternative approach might be necessary.
+
+\subsubsection{Conclusion --- Plurality and Fluidity of Generative Task Complicate the Evaluation of System Design}
+Design recommendations for user interaction and feedback remain elusive, despite the above survey, because systems are designed with various applications in mind. For this reason, the range of available user interfaces varies from score modeling systems that produce no notation and rely on auditory feedback for the results of text input, such as Andrew Sorensen's \emph{impromptu} language for live coding (\cite{Sorensen:2013ij}), to the conventional point-and-click paper simulations of commercial notation software. Should an automated notation system include an interface to a synthesis engine? Yes, according to BACH and PWGL, and no, according to many other systems. This multitude of implied generative tasks complicates comparative system evaluation of interaction and feedback. In addition to potential applications, aesthetic predilection plays a role, too, and one that extends beyond music and into the process of composition immediately: for example, it is arguably more desirable to compose music with the predictive feedback of imagination alone, despite the ready availability of computer applications that create ``mock-ups'' of a composer's work (\cite{Morris:cr}).
+
+A system's generative task can be both plural and fluid. It might be plural if developers hold different concepts of the system's intended use but can agree sufficiently on a certain set of primitives that must be included. In commercial systems, profit becomes a generative task, and the changing demands of a user-base create a constantly shifting agenda for development. It is also the case that systems created for the work of single authors can be suddenly redirected at larger groups of users, causing a radical change in the direction of development but leaving the indelible fingerprint of the system's earlier goals.
+
+Most broadly, these automated notation systems rest upon a common generative task: drawing. But in the same way that order eliminates noise and neutralizes poltical unrest (\cite{Attali:1985ss}), automated notation systems insist that musical notation resembles the symbolic arrangements of language more than drawing or painting, despite a fifty-year-old tradition of deliberately ambiguous relationship between music and abstract graphic art (\cite{Evarts:1968ff}, \cite{Cardew:1961lh}). The systems described here encroach upon the expressive potentials of drawing's analog creativity: a digital, inherently parametric control has usurped the analog control of the human hand's representative capacities. In this sense, an automated notation system cannot help but be impoverished, relative to the graphic potential of physically enacted representation --- but automation excuses itself by hoping to derive benefits orthogonal to those of drawing. Automation eats and metabolizes drawing, to fuel a marathon of symbolic processing. As Glendon Diener writes, 
+
+\begin{quote} Striking the delicate balance between \emph{structural organization} on the one hand and \emph{graphical generality} on the other is a major issue in the design of common music notation systems. The problem, described by Donald Byrd as the ``fundamental tradeoff'' between \emph{semantics} and \emph{graphics} (Byrd, 1986), is readily understood by imagining musical versions of the 'draw' and 'paint' programs available on many small computers. A musical draw program could facilitate high-level editing and performance operations by means of the data structure analogs of notes, staves, parts, and the like, but as a consequence would limit its visual universe to some finite collection of pre-defind symbols. By contrast, a musical paint program by imposing no further organization on its data than that of a two-dimensional array of pixels, would gain graphical generality at the expense of its ability to perform musically meaningful operations on that data (\cite{Diener:1989ve}).\end{quote}
+
+This dilemma suggests a final qualitative criterion by which one may evaluate an automated notation system: an automated notation system implicitly models the range of graphic variability required by composers and proposes a point of balance in a requisite compromise between semantics and graphics.

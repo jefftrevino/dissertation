@@ -1,0 +1,266 @@
+\chapter{Compositional Applications}
+
+This chapter discusses the author's algorithmic composition practice, which recently has begun to include applications of the Abjad API for Formalized Score Control. First, notations made between 2004 and 2008 --- created without the aid of automated notation systems but nonetheless with adherence to \emph{a priori} constraints --- provide a context for recent, computer-assisted notations. Subsequent discussion addresses the aesthetic goals and compositional methods of recent, computer-assisted notations as both continuations of and departures from the techniques and agendas of these earlier works, as is expected from artistic careers that divide into periods before and after the adoption of the computer as a compositional aid (\cite{rosen2011little}).
+
+The chapter does not seek to explain the recent work primarily as the application of a system; rather, the goal is to demonstrate a continuity of artistic concern between earlier work and later work that positions an object-oriented notation system as a novel but reasonable strategy for achieving extant goals, while remaining critically aware of the way that the new technology might alter or reframe these goals. This alignment between aesthetic interest and technology serves to emphasize --- again in the spirit of generative task as an analytic framework --- that technologies are more or less appropriate for different artistic practices.
+ 
+\section{Algorithmic Tendencies, 2004---2008}
+
+Although notations created from 2004 to 2008 rely upon algorithmic construction and \emph{a priori} constraint for both the large-scale formal disposition of materials and the local profile of musical gestures, they were composed without the aid of automated notation systems: although the work depended heavily on modeled musical notation, in the form of commercial typesetting programs, there was no computational modeling of musical abstractions or compositional processes. 
+
+The design of unorthodox notational constructs, rather than computer programs, models novel musical concepts in some these early works. Alternative graphic communication strategies express a composition's approaches to form: so-called ``mobile'' notational constructs express the navigable boundaries of indeterminate formal structures. Although pragmatically engaged in order to leave unspecified the particular succession of events in a musical experience, the graphic communication of available trajectories through a system, rather than the specification of the succession of events itself, reorients the graphic artifact away from the execution of sequenced events, toward the documentation and communication of broader compositional thought. 
+
+Subtle additions to common notation principles inject a formalized indeterminacy into the procession of events, as can be seen in the colored pitch notation system for \emph{Perfection Factory} and the invitation to perform indeterminate ``solo'' gestures in \emph{Binary Experiment for James Tenney}. 
+
+The physical constraints of performance play a substantial role in formalizing indeterminate constraints for these early works, as well. Empirical constraints, such as the instruction to perform the highest note possible in \emph{Forty-two Statcoulombs}, the instruction to listen for the emergence of multiphonic sounds in \emph{Unit for Convenience and Better Living 003} before proceeding, and the instruction to listen until a sound has completely died away in \emph{Perfection Factory} before proceeding locate musical choices conventionally determined by abstract measurement --- musical pitch and the temporal placement of events via divided metric time --- in the acts of listening and performing. 
+
+These early works point to an artistic agenda of unpredicted discovery approached mainly through a core set of strategies: 1) enabling the unpredictably rich by circumscribing via constraint the liminal and contingent; 2) enabling the unpredictably coherent by allowing musical syntax to emerge from generative principles or systems; and 3) enabling the unpredictably metaphoric by providing concrete frames of reference for listening experiences and composition.
+
+\subsection{\emph{Substitute Judgment} (2004) for Solo Percussionist}
+
+Inspired by readings of philosophical inquiries into the ethics of Alzheimer’s Disease patients’ legal status as decision makers, \emph{Substitute Judgment} for solo percussion presents four simple materials as one composition based primarily on interruption. In the same way that contextualized assessments based on memory give way to intuitive assessments of kindness or enmity as Alzheimer's runs its course, the piece focuses on the profound changes that come about by an apparently simple, even trivial change in priority: each of the four materials consists of a single process which runs its course independently of the others and radically alters its material.
+
+Although the score is notated with common notation, the nature of the four processes was first determined according to an arbitrary durational constraint expressed as a drawing. The materials' total durations are by successive divisions in half, so that material A would be four minutes long, material B two minutes long, material C one minute long, and material D thirty seconds long:
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{sjmcDurations}
+\caption{Relative Durations of Materials in \emph{Substitute Judgment} (2004). \index{Relative Durations of Materials in \emph{Substitute Judgment}. (2004)}} 
+\end{figure}
+
+The form of the piece was determined from this initial drawing, by chopping materials B, C, and D into two, three, or four parts and distributing their materials in time; as a simplified example, if all three materials were to be cut into two equal parts and redistributed, the form would appear as the following:
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{sjmcForm}
+\caption{Division and Formal Disposition of Materials in \emph{Substitute Judgment} (2004). \index{Division and Formal Disposition of Materials in \emph{Substitute Judgment} (2004).}} 
+\end{figure}
+
+To arrive at the final composition, this diagram is treated as the plan (overhead view) of a structure. If a viewer positioned in front of the structure (in the plan view, graphically ``below'' the structure) looks at the structure, the materials as seen from left to right (the x-axis still expresses temporal succession) constitute the materials to be heard; that is, the order of heard materials, as read from the diagram, would be A, B, C, D, C, B, A, etc. This is an unnecessarily elaborate generative mechanism to derive a series of simple palindromes, a structure used without this cumbersome, generative apparatus in the trio composition, \emph{Zoetropes}.
+
+The duration of each material suggested various processes. Material A consists of the gradual displacement of one groove figure by another over the course of four minutes. Material B consists primarily of silence and of randomly selected soft sounds, which gradual converge on the glass bottle sound over the course of two minutes. Material C consists of jet\'{e} gestures between randomly selected instruments, the selection of which gradually converges on the bongos over the course of one minute. Material D consists entirely of woodblock eighth notes, increasingly ornamented by glass bottle eighth notes over the course of thirty seconds. 
+
+Both the form and the individual trajectory of musical materials in the composition have been highly constrained; in fact, the identity of each of the materials is primarily the communication of these governing constraints. Rather than allow each of these trajectories to speak clearly, however, formal constraint fractures and rearranges these autonomous participants into an unpredictably coherent play of sudden shifts between materials. 
+
+\subsection{\emph{Binary Experiment for James Tenney} (2005) for Four Contrabasses}
+
+\emph{Binary Experiment for James Tenney} is a mobile notation for four contrabasses. For each of the two sections, the players move clockwise or counter-clockwise around ``mobiles'' of three pitches or actions, starting on an arbitrarily chosen pitch, moving one around the circle in an arbitrary direction, and performing each pitch for the duration of a single bowstroke at the dynamic through which the player passes to arrive at the performed note. Because the players may navigate around the mobile in an arbitrary direction, the link between a certain pitch and a certain dynamic varies, as does the duration of each pitch, because of the link between the dynamic of the note and its duration; this is due to the link between the physical length of the bow and the time it takes to perform a single bowstroke at a specified dynamic. Stopwatches determine when a performer should move to a subsequent mobile --- there are three for each of the two parts --- and a small set of timelines at the top of the score illustrates the times at which each of the four players moves to a new mobile; the change times are also specified between the mobile graphics, for performance convenience.
+
+\begin{figure}[H] 
+\includegraphics[page=3,width=\textwidth]{binaryExperiment}
+\caption{Section A of \emph{Binary Experiment for James Tenney} (2005) for four contrabasses. \index{Section A of \emph{Binary Experiment for James Tenney} (2005) for four contrabasses.}} 
+\end{figure}
+
+Part B rewrites Part A with a new set of constraints. Each bassist performs on only one of the four bass strings, bouncing the bow on the string for the specified amount of time (slow, medium, or fast, each accompanied by a duration in seconds). In the second mobile, a ``solo'' of between five and fifteen seconds may be performed, still on only one string. Rather than passing through dynamic markings as they navigate the mobiles, the performers pass through wait times, during which they perform silence. These wait times increase throughout, with the result of an increasingly sparse texture toward the end of the composition. 
+
+\begin{figure}[H] 
+\includegraphics[page=4,width=\textwidth]{binaryExperiment}
+\caption{Section B of \emph{Binary Experiment for James Tenney} (2005) for four contrabasses. \index{Section B of \emph{Binary Experiment for James Tenney} (2005) for four contrabasses.}} 
+\end{figure}
+
+\subsection{\emph{Mobile} (2005) for Tenor Saxophone}
+
+\emph{Mobile for Tenor Saxophone} adopts the same binary, mobile-based notational construct with two different sets of constraints. In an A section, a wandering, diatonic melody is successively ornamented by recursively nesting its own intervals upon itself; the performer passes through pairings of dynamic markings and tempos while circulating around the mobile. In contrast to the seamless mobile navigations of the contrabass quartet, this makes audible, via potentially sudden shifts in both tempo and dynamic, the move from one mobile cell to another. 
+
+\begin{figure}[H] 
+\includegraphics[page=4,width=\textwidth]{mobileForSax}
+\caption{Section A of \emph{Mobile} (2005) for tenor saxophone. \index{Section A of \emph{Mobile} (2005) for tenor saxophone.}} 
+\end{figure}
+
+While this first section allows flexible navigation of traditionally specified musical material, the second section leaves material radically unconstrained. The performer is instructed to first construct a ``scale'' of seven multiphonic trills, arranging them from least to most dissonant, as listened (one is the most consonant and seven the most dissonant). The performer then navigates a mobile, passing through couplings of dynamic markings and trill shape, in the form of an illustrated signal; a wave crest indicates a move to the upper sound in the trill, and a wave trough indicates a move to the lower sound of a trill.
+Although the performer navigates just one mobile, rather than several, global form is nonetheless carefully specified: the score specifies that the A section should last three minutes, while the B section should last four minutes.
+
+\begin{figure}[H] 
+\includegraphics[page=5,width=\textwidth]{mobileForSax}
+\caption{Section B of \emph{Mobile} (2005) for tenor saxophone. \index{Section B of \emph{Mobile} (2005) for tenor saxophone.}} 
+\end{figure}
+
+In addition to the described traversals, the score also instructs to perform silences of two to forty seconds duration between the performance of each cell in both parts A and B. To weight the probability distribution of silence durations, the score instructs that relatively longer silences should be performed relatively less frequently. 
+
+\subsection{\emph{Zoetropes} (2005---6) for Bass Clarinet, Cello, and Percussion}
+
+Inspired by the eponymous, proto-cinematic machine, the structure of \emph{Zoetropes} was planned initially as an entirely palindromic structure, the local phrase structure of which would also be palindromic: just as sufficiently rapid movement of still images causes, beyond some perceptual threshold, the impression of a moving image, the application of palindromic structures to increasingly small timescales would eventually produce an audibly palindromic experience. (This analogy is dubious, but artistically intriguing.) In contrast to the previously described works, in which form and material were governed by differing but complementary logics of constraint, Zoetropes applies the same constraint at two levels of structure, leaving the temporally shortest level of structure open to a diversity of constraints, in the manner of the constituent materials of \emph{Substitute Judgment}. In composition, it was decided that a non-palindromic coda would break free from the initial design after a prolonged bass clarinet solo; however, the formal plan was executed in tact for the majority of the work.    
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{zoetropes}
+\caption{Bass clarinet solo from \emph{Zoetropes} (2005---6). \index{Bass clarinet solo from \emph{Zoetropes} (2005---6).}} 
+\end{figure}
+
+The bass clarinet solo that marks the point between rigorous observance of structural constraint and its subsequent abandonment serves as a representative example of the nature of constraint governing the specific materials in the work. Here, a single gesture repeats, with several types of inflection and interruptions: hyperspecified ``tacet'' durations stand in for conventionally notated rests, and equally overdetermined fermatas specify the duration of embouchure multiphonics (unfilled parallelogram noteheads). As if the result of one of the mobile structures described above, sudden, simultaneous changes of tempo and dynamic intervene to shift the flow of time suddenly throughout. Measure 122 represents the local midpoint of the structural palindrome, and the sixteen-second measure indicates this sonically with a simple, pyramid-shaped embouchure multiphonic, which increases attack density and dynamic into the structural point of reflection, and reduces these parameters exiting the midpoint; after this, the music is an exact reflection of the previous music (measures 123---6 are the reverse of measures 116---120).
+
+As in \emph{Substitute Judgment}, a straightforward process or simple repetition has been inflected via the simultaneous interference of competing modifiers. This suggests a conceptual model akin to the object in object-oriented programming: a musical material seems to have attributes -- in the case of the main material, tempo; traversal in one of two directions, depending on which side of the palindromic structure it resides; and dynamic. In the case of the intervening interruptions, materials have attributes like dynamic, tempo, and something akin to ``window size'': measures 108 and 119 seem to be truncated samples from measure 122. Even the ``tacet'' circles seem to have a single duration attribute determined randomly within a range of possible values. The repetitive, although fractured, nature of the final audible surface draws attention to this parametric variation of otherwise constant musical material.
+
+\subsection{\emph{Unit for Convenience and Better Living 003} (2006) for Solo Bass Clarinet}
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{unitA}
+\caption{Materials in \emph{Unit for Convenience and Better Living 003} (2006). \index{Bass clarinet solo from \emph{Zoetropes} (2005---6).}} 
+\end{figure}
+
+\emph{Unit for Convenience and Better Living 003}, like \emph{Substitute Judgment}, depends on the mutually interrupting exposition of four contrasting materials. In this case, each material is given a distinctive profile via dynamics, tempo, register, and gestural comportment: the materials are a slurred altissimo figure; a ``backwards'' sounding multiphonic, inspired by the sound of reversed magnetic tape playback, the duration of which is denoted with a ``TS'' time signature to indicate that the duration of the sound should be equal to the time necessary for the sound ``to speak''; a low, punched staccato figure, and a ``ploit'' sound made with the mouth alone. 
+
+These materials repeat in their order --- A, B, C, D --- throughout the entire composition; however, a formal scheme dictates the relative durations of the materials and the total duration of one cycle through all four materials. As the form progresses, the duration of the total cycle lengthens, until the maximum cyclic duration has been achieved. After this, a fifth material, a multiphonic trill, begins expanding during each cycle and eventually crowds out the four initial materials, claiming the entirety of the cycle's duration for itself.
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{unitB}
+\caption{Material E has almost entirely crowded out the other materials in \emph{Unit for Convenience and Better Living 003} (2006). \index{Material E has almost entirely crowded in \emph{Unit for Convenience and Better Living 003} (2006).}} 
+\end{figure}
+
+\subsection{\emph{Mexican Apple Soda (Consumer Affect Simulation I.1)} (2006) for Contrabass and Chamber Ensemble}
+
+\emph{Mexican Apple Soda (Consumer Affect Simulation I.1)} (2006) begins with a windowing of materials similar to that of the interruption materials in the bass clarinet solo found in \emph{Zoetropes}: every material that will make up the entire seventeen-minute composition is heard briefly, for just a few seconds, during the first twenty-five measures of the piece. After this, a three-minute contrabass solo gradually integrates two initially disparate materials. While the formalized interruption of one material by another has appeared often in previous works, this solo communicates the interruption as a gradual process: the two materials are initially heard in tact, without interruption, and begin to gradually interrupt one another more and more, until the solo reaches a condition in which a subsequent measure must be from a different material, resulting in a terminal state of rapid alternation between the two.
+
+Throughout the composition, unison exclamations performed on six crackleboxs, an unpredictable electronic instrument invented by Michael Waisvisz, punctuate the musical order with electronic noises. In keeping with the previous mobile forms, the entire work obeys a binary form, in which the second half of the composition consists of glacial, anti-rhetorical materials, in contrast to the relatively rhetorical modality of the first section. In this sense, a formal constraint has again been applied at two levels, in the manner of the palindromic structures of \emph{Zoetropes}: the contrabass solo integrates two materials that are introduced first as a strictly binary pair, and the large-scale form that includes this contrabass solo creates a similar binary disposition.
+
+\subsection{\emph{Mexican Apple Soda Paraphrase} (2007) for Contrabass and Live Electronics}
+
+\emph{Mexican Apple Soda Paraphrase} (2007) reduces the chamber concerto to a duo between pre-recorded cracklebox samples and the contrabass material from the concerto's solo. This is the work's first example of a computationally formalized model of music, executed in the graphical programming language, Max/MSP. An animated GUI directs the performer around a mobile score, replacing arbitrary choice with selection via random number generator; each time the performer is redirected, the program plays a randomly selected cracklebox sound sample, during which the performer rests. The resulting performance is a spastic intercutting of frenetic contrabass material and mercurial electronic interjection. 
+
+\subsection{\emph{Perfection Factory} (2008) for Two Percussonists}
+
+In \emph{Perfection Factory} (2008), two percussionists paint a bell tree to reduce a set of over twenty pitches to a set of five pitches. This process is a pragmatic solution to the inevitable indeterminacy of a bell tree's pitches: used primarily as an effect instrument, the specific pitches of the bells vary entirely from one instrument to the next, preventing a composer from approaching the instrument with traditional pitch notation. In response to the uniquely indeterminate quality of the instrument, a system of listening, memory, and painting creates a link between symbol and action as the score is performed, as can be seen in the score's description of the ``memory notation'':
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{pfmemory}
+\caption{Memory notation navigates between listened selection and notated pitch in \emph{Perfection Factory} (2008) for two percussionists. \index{Memory notation navigates between listened selection and notated pitch in \emph{Perfection Factory} (2008) for two percussionists.}} 
+\end{figure}
+
+When integrated with conventional musical notation, the memory notation instructs the selection of a random bell in one of three registers of the instrument, the painting of a bell to indicate that it will correspond to a colored notehead, and the subsequent performance of the marked bell when the colored notehead reappears: 
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{pf}
+\caption{Colored noteheads indicate selected pitches in \emph{Perfection Factory} (2008) for two percussionists. \index{Colored noteheads indicate selected pitches in \emph{Perfection Factory} (2008) for two percussionists.}} 
+\end{figure}
+
+This system of pitch choice gradually selects a set of five pitches from an initial set of over twenty pitches, dramatizing the process of selection with episodes performed with the growing set of pitches. In this way, the challenge of responding to an instrument's inherent indeterminacies with a circumscribing constraint yielded an episodic formal strategy; the form's primary agenda is to expresses the selection procedure.
+
+\section{Installation and Visual Music, 2009---2010} 
+
+Between 2008 and 2009, the author curated a series of instruction score performances in formerly abandoned places in Berlin, Germany, in collaboration with the members of the Institute for Intermediate Studies, an ensemble dedicated to the realization of past and present instruction scores; this work was a continuation of experiences working with Fluxus artists Henry Flynt and Allison Knowles in 2007 and 2008. Through this experience, the author began to consider the emergence of an entire work from an elegantly specified instruction. The first work described here was created as a contribution to one of the performances and was later presented as a contribution to the VIDEOKILLS international video festival. The subsequent computer-generated animations were created for a solo exhibition at Golden Parachutes Gallery in Berlin.
+
+\subsection{\emph{Algorithmically Generated Trees} (2009)}
+
+\emph{Algorithmically Generated Trees} (2009) is a generative computer animation created using Processing, a simplified version of the Java programming language created to teach artists and designers about programming (\cite{reas2007processing}). A video projection algorithmically generates a cartoonish, abstract tree each frame, stopping at a specified time interval to label the tree with a number and write the image to disk. On a desk next to the projection, a sign-up sheet invites the observer to note the number of a tree found especially attractive; a rating of the color, beauty, and height of the tree on a scale from 1---5; and an e-mail address. After the exhibition, trees were e-mailed to their corresponding observers. 
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{trees}
+\caption{Trees generated and e-mailed to the audience in \emph{Algorithmically Geneated Trees} (2009). \index{A sample of the trees generated and e-mailed to the audience in \emph{Algorithmically Geneated Trees} (2009).}} 
+\end{figure}
+
+The code created for this project was made with primitive coding skills and did not take advantage of data encapsulation (\ref{sec:trees}); however, it presages the concerns of subsequent computational works and continues the parametric agenda of the previous, non-computational work. Many variations on a single form are determined with parametrically constrained randomness, and the height of the tree, the number and angle of its branches, and the color of each leaf are determined via random number generation within tuned value boundaries. 
+
+\subsection{\emph{Blooms} (2010)}
+
+\emph{Blooms} are three looping, abstract animations, commissioned for a gallery exhibition on the topic of ecstatic sensual experience. Departing from the religious uses of the mandala as an aid for contemplation and meditation, three programs create and gradually transform simple rotational patterns based on parametrically changing geometric figures. These works also engage a tradition of ``visual music,'' a tradition of abstract animation that adopts the vocabulary and conceptual framework of music to create visual work. The animations were created in the Field programming environment, a hybrid of timeline and text-based coding that allows the programmer to embed breakpoint functions, sliders, and menus directly into the code, and to arrange code boxes on a canvas for time-sensitive execution according to a left-to-right timeline. The first animation is a study in nested circles, the radii of which expand and shrink gradually over time with a period of four minutes:
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{bloom1}
+\caption{Stills captured from the rotating motion of \emph{Bloom I} (2010). \index{Stills captured from the rotating motion of \emph{Bloom I} (2010).}} 
+\end{figure}
+
+The second animation engages music by proposing a kind of visual noise: by adding a random coordinate deviation to the endpoints of drawn ellipses, a figure distorts while maintaining to some extent its original form. The boundaries of this deviation increase and decrease along a cosine curve, resulting in a figure that gradually loses and regains its original geometric regularity. 
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{bloom2}
+\caption{Stills captured from the rotating motion of \emph{Bloom II} (2010). \index{Stills captured from the rotating motion of \emph{Bloom II} (2010).}} 
+\end{figure}
+
+The third animation borrows the concept of ``phasing'' from contemporary minimal music, and three identical forms rotate at three different rates, creating emergent patterns. The figures scintillate as the result of specifying the size of constituent elements smaller than one pixel, causing the rendering of the computationally described image to compromise at each frame on the precise location of each pixel, often rendering ``L''-shaped forms instead of single pixels.
+
+In all three works, simple instructions --- nest circles inside other circles, add noise to points, rotate at a certain rate --- create rich perceptual experiences, either through constrained randomness, as is the case with the precise location of drawing in the second and third animations, or through gradual changes in a simple, parametric model of an object's behavior, as in all three animations.
+
+\section{Computer-assisted Works, 2010---2013}
+\subsection{\emph{Being Pollen} (2010---2011) for Solo Percussion}
+Being Pollen, a collaboration between the author and poet Alice Notley, is a sixteen-minute work for one percussionist playing nineteen instruments and one loudspeaker. Its title is taken from Notley’s poem “Pollen.” The work grew from the artists’ discussions about how western art music uses text: conventionally, artists import text into a musical environment and stretch its spokenness across musically quantized rhythms; this implies a process of mediation in which a poem is first assumed text, not talking. In response to history, Notley requested that archival recordings of her poems, housed in UCSD’s special collections archive, be treated as extant musical voices, as sonically complete entities that need not first be taken as soundless words to become notated invitations to sound. In response to this impetus, the composer began with a curatorial phase of archival listening to select the recorded recitations for the work.
+
+In a production chain of multiple computer programs, Abjad was used to cultivate sensitivities to the natural rhythms of the recorded poems. First, the composer slowed down the poems to half speed. Next, the composer created a program that allowed him to tap along with a poem on a laptop trackpad, recording the relative temporal relationships of all of its syllables. Having associated each syllable (or intentional breath) with an onset time in milliseconds, Audacity was used to graphically adjust temporal locations to an accuracy of one millisecond. Finally, using Josiah Oberholtzer’s implementation of Paul Nauert’s Q-Grids quantizer, Abjad rendered as musical notation a list of attack-times and syllables describing the recitation of Notely's poem, ``Pollen.'' This allowed the composer to consider a detailed rhythmic representation of Notley’s spoken word in the composition of the work.
+
+Like the alternating episodes of \emph{Perfection Factory}, the form of the work adheres to a kind of rondo form, in which episodes of solo percussion alternate with duos between percussion and recorded recitation. Each section was realized with its own notational construct, appropriate to the relationship between percussion and recitation. The introductory section and coda relate directly to the gradual, visual processes in \emph{Blooms}. Percussion instruments were grouped from least to most resonant, and half-cosine interpolations executed gradual transitions from dryer to wetter sounds. At the same time, the half-cosine curves added more or less rhythmic ``noise'' to a steady eighth-note grid, modulating the music from pulse to unpredictably complex rhythms and back again. 
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{coda}
+\caption{Half-cosine interpolations transition from complex rhythms to pulse in \emph{Being Pollen} (2011). \index{Half-cosine interpolations transition from complex rhythms to pulse in \emph{Being Pollen} (2011).}}
+\end{figure} 
+
+Rather than the Python programming language in Field, as used for \emph{Blooms}, the transitions were executed in the LISP programming language with the aid of Sibelius's quantizer (Oberholtzer developed the Abjad quantizer during the composition of the work, with feedback from the author).  
+
+The second recitation's percussion accompaniment relates directly to the instruction score tradition and consists of a single measure of music --- a composite of speech rhythms from the first recitation --- accompanied by an instruction to repeat the music gradually more and more slowly until tempo has dissolved:
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{two}
+\caption{The second recitation pairs common notation with an instruction score \emph{Being Pollen} (2011). \index{The second recitation pairs common notation with an instruction score \emph{Being Pollen} (2011).}}
+\end{figure} 
+
+The third recitation's accompaniment is entirely algorithmically generated: a timbre matching algorithm aligns percussion timbres with any syllables if there exists a spectral match of 90\% or greater between a syllable and a percussion sound; if there is less similarity, the syllable is accompanied by a silence. This results in a sparse percussion texture that acts as a kind of skeleton of the speech rhythm. It is heard first without the recitation, as an arrangement of sounds in itself, and again in synchronization with the recitation. 
+
+\subsection{\emph{+/-} (2011---2012) for Twenty French Horns}
+\emph{+/-} for twenty french horns is programmatic, naturalistic recreation of a sonic experience from the everyday environment of San Diego and an exploration of the perceptual experience of negative and positive space in the auditory domain. Inspired by the sound of driving under a highway overpass in the rain, a sudden silence must be contextualized as an event. Accordingly, the form proceeds from a state of primarily silence, with sounds grouped between large pauses, toward a state of uniformly distributed sound, to be suddenly interrupted by a single silence, and then back from a state of uniformly distributed sound toward a state of primarily silence. This formal trajectory is essentially identical to the palindromic disposition of material in \emph{Zoetropes}. Rather than a nesting of palindromic structures, as in the trio, the focus is on the temporal distortion of the palindromic structure at a single structural level: the path traversed into the point of reflection is the same as that traced out of the midpoint; however, the duration of the path traced out of the point of reflection has been multiplied by a factor of four to cause the same gradual change to take place over a substantially longer duration.
+
+These naturalistic and formal agendas conspire to reduce the composition's sounds to points, to placeholders for sound rather than vivid sonic entities: the pieces uses only the sound of the palm of the hand slapped onto a french horn mouthpiece (inserted into the instrument) in order to communicate the sound/silence dichotomy elegantly and to approximate the sound of a raindrop landing on a surface. A unity of representational impetus gives way to a plurality of reference in listening, and the resulting experience demonstrates that this sound, when massed and gradually altered, evokes manifold, vivid links to everyday experience --- popcorn, fireworks, gunfire, the pouring of rice or gravel --- resulting in a play of reference and participation in the large-scale shape.
+
+Like the previous works, the composition was realized using half-cosine interpolations, this time to control event densities. Via Python, Csound was used to create mock-ups of the final listening experience, and variables in the code were tuned to change global durations of a parameterized musical form; the duration of the first ``leg'' of the transition, into the point of palindromic reflection, and the duration of the remainder of the form were especially important. 
+
+Despite working with the Abjad API's object-oriented model of notation throughout the compositional process, it was decided upon examination of the resulting notation that an animated notation interface would be a more appropriate choice for the realization of a multi-tracked studio recording. The notation data was translated into a numeric ``score'' and written to a text file, which then served as an input to a sketch in the Processing coding environment, which produced a quicktime movie for each of the work's twenty parts. These animations may be used for a live performance of the work, as well, through synchronized digital tablet devices.
+
+\begin{figure}[H] 
+\includegraphics[page=1,width=\textwidth]{animation}
+\caption{Screenshot from the animated notation parts created for \emph{+/-} (2011---2012). Mouthpiece pops are indicated by points that scroll from right to left along a midline, to be performed when they cross the vertical line at the left boundary. The minimal aesthetic of the interface is inspired by early video games, such as Pong (1972). \index{Screenshot from the animated notation parts created for \emph{+/-} (2011---2012).}} 
+\end{figure}
+
+This process revealed an unanticipated flexibility of output medium. Instead of considering the working process as the creation of a computer model of the resulting artifact (a musical notation), steered by a model of musical/compositional ideas, the link between code and artifact loosened, revealing the possibility of a model of musical notation redirected as a mapped data source for the creation of artifacts in a variety of possible media.
+
+\subsection{\emph{The World All Around} (2013) for Harp, Clarinet, and Piano}
+
+\subsubsection{Concept}
+The World All Around for prepared piano, Eb clarinet, and harp is a double tribute to Maurice Sendak and John Cage. It is most apparently a late contribution to the Cage centennial celebration: the piano preparations from Cage's \emph{Sonatas and Interludes} (1946---8) have been used in a musical language closer to the later style of Cage than to the earlier style in which they were born. The piece is equally a tribute to the late Maurice Sendak, author of \emph{Where the Wild Things Are} (\cite{lystad1989taming}), the text of which contains the name of the commissioning San Francisco ensemble, Wild Rumpus.
+
+The specific inspiration from Sendak's work here is far from a wild rumpus: the title, \emph{The World all Around}, refers to the transformation that frames the main character's adventures, the metamorphosis of Max's room into a jungle, and then again back into a room. The return journey from the land of the wild things, in which ``the world all around'' becomes walls again, lasts, in the text, longer than an entire year. The composition renders this journey as a gradual transition from the ``wild'' timbres of the prepared piano to the unprepared sound of the concert piano; punctuating fermatas of varied lengths create a formal experience akin to a slowly paced cinematic montage, each shot of which returns to an almost unchanging scene of glacial passage. 
+
+\subsubsection{Construction}
+The score was created using only the Abjad API for Formalized Score Control. Composition began by choosing beautiful multiphonic sounds in collaboration with the clarinetist. The process then consisted of the formulation of a set of random operations and constraints that would produce the three parts of the piece. First, the clarinet part was composed by creating a measure for each multiphonic sound and inserting a rest and a single pitch, taken from the bottom of the multiphonic, at random locations in each measure. The fermata over the rest would be variably chosen from four different lengths. Next, these measures were shuffled; the resulting order is the order of measures in the clarinet part. The rhythms of the piano and harp part derive from the spacing of the rests in the clarinet part: the durations between rests in the clarinet part were shuffled to determine the sequence of durations in the piano and harp parts. All sounds are performed ``laissez vibrer,'' and the notation assumes 100\% legato (no silence) between sounds. Silences result when the sustain of a preceding sound is shorter than the duration between a sound and its successor. 
+
+The pitches of the piano and harp parts are chosen according to a division of the entire work's duration into four equally long formal sections, each of which specifies different constraints for the choice of interval between clarinet and harp part, on the one hand, and the possibly selected notes in the piano part, on the other; within these constraints, a harp note's sounding octave, timbre (an octave harmonic or not), and doubling (a pitch doubled at the octave or not) are made by random choice, and the choice of the prepared piano sounds were categorized by ear into four groups of sound that move toward the unprepared sounds that form the fourth category. The harp notes are chosen by randomly choosing an interval from the list of active intervals, randomly choosing a note from a measure's clarinet part, and measuring the interval from the selected clarinet note. All dynamics are determined via random selection without repetition. The sustain and una corda pedal positions were determined independently according to random selection informed by the previous choice.
+
+\subsubsection{Measurement as Form}
+The work is both a tribute to and a commentary on Cage's practice: with reference to the work of Marcel Duchamp, Cage's prepared piano instructions are reframed as a practice of measurement. Cage describes the physical location of piano preparations, not the resulting timbres, and sonorous quality has been usurped by measurement. In Duchamp's \emph{Three Standard Stoppages} (1913-1914), the curve of a dropped thread produces the ``canned chance'' of three undulating forms, three one-meter-long measures that suggest the form of rulers, of instruments of subsequent measurement. The use of measurement-determined piano timbres in a form governed itself by arbitrary correspondences of measurement and reorganization offers a congruence of method between the organization of the work and its piano timbres.
+
+\subsubsection{Comments on the Code}
+Several aspect's of the work's code are notable. An object-oriented implementation of the WoodwindDiagram (\ref{sec:wwFunction}) class was needed to render the multiphonic sounds that play a central role in the work. After this, the algorithms used to execute the above construction were fairly simple. Basic math functions were of use in the piano part. Using set theoretic operations, the set of prepared piano notes was subtracted from the set of all piano notes to derive the set of all unprepared piano notes. (While laborious using basic comparison and elimination between lists, Python's built-in support for unordered collections (sets) as well as operations on them --- union, disjunction, difference --- made this a matter of three lines of code.) In deference to the metaphor of travel and return, the piano's preparations have been sorted into categories of proximity to the unprepared piano timbre, with the aim of gradually unpreparing the instrument's timbre throughout the form (by making the performance of an unprepared note more likely, not by physically removing the preparations from the instrument); four categories of proximity correspond to four, two-minute quarters of the eight-minute form. For each note, psuedo-random number generators select a dynamic, based on that of the previous note, and the sustain and una corda pedals are either depressed or lifted. The timing of events results from a shuffling of the durations between rests in the clarinet part; the rhythmic notation results from the placing of tie chains equal to the durations between rests, followed by functions that hide all but the first note of a tie chain. All of this is assembled on a single staff, which is then split into two staffs, forming a bracketed piano staff, using middle C as a split point. (\ref{sec:pianoPart})
+
+The creation of the harp part proceeds identically to that of the piano part, with the exception of pitch selection. While the form has still been divided into four equal parts, the selection of pitches is determined with reference to a set of intervals. For each note to be added to the harp part, a pitch class from the clarinet part is selected, within a span of seven ``beats'' (although the composition is rendered without meter, the program assumes a time signature of 7/4 as it calculates the work's parts); then, an interval from the active set of intervals is added to the clarinet pitch to determine the harp pitch. The octave of the pitch class, possible doubling of the selected pitch at the octave, and whether or not a pitch is a harmonic or a traditionally plucked note, are determined by pseudo-random number generators. (\ref{sec:harpPart})
+
+Finally, the three instrument parts are added to a score, which is contained in a LilyPondFile object. Overrides at the level of score set the space/time ratio of proportional notation, and overrides at the file level determine the layout and formatting of the completed document, such as margins, inter-system spacing, and paper size. (\ref{sec:trioScore}) Finally, the program generates the formatted score as a .pdf file (\ref{sec:world}). 
+
+The format of the score engages in a useful trick of formatting sleight-of-hand to preserve the impression of relatively unmeasured music: the notated measure has been conflated with the system, giving the appearance of entirely unmeasured music while conceptually preserving the utility of the measure as a temporal unit in compositional choice. 
+ 
+\subsubsection{Revisions}
+A reading session with the ensemble yielded a list of revisions to be made before the submission deadline for final scores and parts. To demonstrate the efficacy of this method of working with regard to possibilities of efficient revision, the following list enumerates the nature of each revision and the approximate amount of time required to generate a revised score that implements each specific revision:
+
+\begin{enumerate}
+\item The clarinet can slur only to or from the lowest pitch in a multiphonic. (12 minutes.)
+\item Diaphragmatic vibrato should be much less likely in the clarinet part. (4 minutes.)
+\item All single noteheads in the clarinet part should be harmonic noteheads. (10 minutes.)
+\item The harp should only play two octaves above middle C or lower.  (1 minute.)
+\item Harp harmonics should be executed only only on strings from F in the octave above middle C and lower, and not the lowest octave of the instrument. (10 minutes.)
+\item Harp notes can be converted to octaves as frequently as to harmonics. (26 minutes.)
+\item The piano should only play three octaves above middle C or lower. (5 minutes.)
+\item Remove the harsh multiphonics. (1 minute.)
+\item Event density in the harp and clarinet parts should be doubled. (30 minutes.)
+\end{enumerate}
+
+The nature of these revisions illustrates the constraint-based nature of the compositional process. As though adding detail to a sketch, additional boundary conditions accrue to limit specific aspects of the work. The small amount of time required to implement each of these revisions shows that existing formalizations can normally be retuned in order to enact new constraints, i.e. a numeric value determining the lower and upper bounds of an instrument's possible register can be altered. Sometimes a new constraint must be formalized, which takes longer than tuning an existing code variable.
+
+The duration of the whole work, eight minutes, was specified by the ensemble in the commission. The original version of the work lasted twenty minutes when first performed in rehearsal and was reduced by changing a single variable in the code; all of the work's formal relationships scaled accordingly.
+\section{Conclusion}
+
+The introduction of computational modeling techniques has both continued and fundamentally changed the aesthetic agenda of the earlier work. Parametric approaches abound in both early and later work and offer the most obvious source of continuity. At the structural level of gesture or phrase, the explicit proposition of musical entities to be repeated and varied, whether as the cells of a mobile form in earlier work or a catalogue of shuffled and slightly differing measures in the later work, act as a source of balance between proposition and negation. At higher structural levels, gradual change formulated as a transition between two states abounds.
+
+Within these continuities, strategies shift. Reference to the mobile notations offers an especially stark contrast: whereas the presence of musical entities with varying parameters was formerly communicated by graphic means, leaving their navigation up to constraints on performance, formal conceit, or pseudo-random selection, the recent work replaces this graphic strategy with common notation, removing the formalization of parametric modeling from the graphic realm and relocating it in notation-generating code. The editorial capacity so fundamental to composition has been removed from the moment of performance and relocated in an iterative process of revised continuity; the design of a system for improvisation has been replaced with a more conventional idea of composition.
+
+From the perspective of previous notations that employ a traditional staff notation, the contrast looks relatively subtle but nonetheless substantial. An earlier profligacy of graphic specification --- of invented notations, meticulously specified in the notations' front-notes --- has given way to a much more limited set of notational strategies. A generous reading views this change as a move toward elegance, toward the use of only what is necessary. A more critical view blames an overly restrictive computer model of notation for preventing the imaginative graphic strategies of the earlier work; however, the move to abandon conventional notation in favor of animated parts in \emph{+/-} shows that this working strategy enables a flexible plethora of divergent output media in a way that drawing cannot. 
+
+The compositional ideas and formal conceits, like the notational strategies, have been similarly pruned: the application of palindromic structure in a nested, simultaneous disposition (\emph{Zoetropes}) becomes a single structural palindrome (\emph{+/-}); the hyperspecified interruption of materials (\emph{Substitute Judgment}) gives way to a uniform conception of material, inflected by operative constraints (\emph{The World all Around}). On the whole, there is much less contrast in the recent work, potentially because contrast does not scale well in this working process. Optimistically, the modular utility of previously written code suggests that contrast will become easier as more varieties of music have been modeled; however, this also suggests a kind of escape velocity, in which the technology will afford homogeneity of material until a sufficient number of reusable code modules and a certain facility with their organization and recombination can overcome the medium's gravity.
+
+To what extend might any of these differences be good or bad? It is difficult to uncouple the link between technology and aesthetics, because, while the technologies at play here are apparent, aesthetic priority remains a moving target, a matrix of the author's experiences, the limitations on a work, and fidelity to a programmatic inspiration. An abiding interest in programmatic agenda throughout all of the work suggests that the most meaningful evaluation for the work might be that of an affective congruence between inspiration and musical experience. This priority renders the pressure toward homogeneity of material innocuous, as long as the programme communicated is one of stasis or gradual transition. 
+
+Pragmatic evaluations certainly exist. The ability to revise the duration and proportion of an entire composition with a single variable change reduces to mere seconds a revision process that might normally take months. As importantly, the process of working iteratively, with many successively refined, complete drafts, can be much more enjoyable than the a conventional approach in which a single iteration of the work seems to occupy the entire time allotted for creation; it is at least qualitatively different. 
+
+This method of working seems also to bring the editorial capacity of the composer to the fore: when faced with multiple solutions that all represent robust solutions to specified constraints, how does one choose the best version? As architect and digital fabricator Mark Goulthorpe asserts, ``Faced with only the most robust solutions to a problem, the architect nonetheless was called upon in this instance to select \emph{that which he found most suitable}'' (\cite[122]{Goulthorpe:2011ly}). In this way, progress on a given work has been circumscribed as the formulation of distinctions based on the examination of multiple versions of a work that may seem initially identical. The composer discovers, rather than formulates, the identity of the work, through iterative refinement and the development of initially unknown distinctions. 

@@ -1,0 +1,484 @@
+\chapter{Automated Notation for the Analysis of Recorded Music}
+\section{Background}
+The literature shows that data visualizations can illustrate complex interrelationships in musical structures that are otherwise difficult to notice in large data sets extracted from recorded music (\cite{sapp2005visual}, \cite{kunze1996see}, \cite{mitroo1979movies}, \cite{sapp2011computational}, \cite{cook2007performance}) and that toolkits for visualizing and annotating musical content are now widely available (\cite{cannam2006sonic}, \cite{herrera2005mucosa}, \cite{marsden2007tools}); at the same time, an increasing number of classical musicians and historical musicologists have become comfortable engaging recorded history as a meaningful input into the practice of performance and scholarship (\cite{butt2002playing},  \cite{cook2010ghost}, \emph{Reactions to the Record} conferences at Stanford University, 2007, 2009, and 2011 (no proceedings available)). While trained musicians read musical notation fluently, they are often unfamiliar with other data visualization formats. If data about recordings is to meaningfully inform performance practice, there are two possible compromises: institutions can change, teaching music students to read scientific visualizations, or researchers can communicate multidimensional analyses through musical notation. This chapter addresses the latter possibility. How can data visualization reconsider and remap musical notation to share recorded performance data with musicians? As one answer to this question, a Python-based system repurposes the Abjad API for Formalized Score Control to notate a comparative analysis of data corresponding to 61 recordings of the first movement of Anton Webern’s Piano Variations (op. 27), previously analyzed to extract onset timing and amplitude information by Craig Sapp.
+
+\section{Methodology for Representing Amplitude and Onset Time as Notation}
+
+The link between phrasing and amplitude in the performance of music is important but difficult to study, but a computational, quantitative analysis of recordings may elucidate this relationship. Given a data set that expresses the loudness of each event in a piano performance, as well as events' relative temporal occurrence, it becomes possible to study comparatively the ways in which performers shape musical events into larger gestalts by visualizing this information and comparing different performances from the same score. To this end, the Abjad API for Formalized Score Control is used to process data from many recordings and visualize the data using an augmented version of conventional musical notation.
+
+\subsubsection{Augmented Notation}
+
+Two key modifications enable common practice notation to convey additional information about performance data. First, proportional notation, in which space and time are linked with a consistent ratio between measured time and horizontal space on the page, ensures that the strict temporal relationships of events have been given as accurate a graphic correspondence as possible; in order to give this horizontal, spatial correspondence rhythmic primacy, the conventional elements of rhythmic notation --- beams, tuplet brackets, flags, and dots --- have been hidden. (They are artifacts of the quantization process's arbitrary division of time.) Second, rather than the traditional, low-resolution system of dynamic indications, which offers around a maximum of ten possible amplitude indications, the greyscale color value of the notehead indicates the loudness of the event; the whiter the notehead, the softer the event, allowing around one hundred possible amplitudes. Silences have not been represented. 
+
+\subsubsection{The Program}
+
+The following Python code notates performance data for multiple recordings as a score with one interpretation per staff, according to the system described above. Much of the program requires basic data processing from files, especially the first section of the code, in which the performance data must be input into the program: 
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def getFiles(dirString):
+...     names = os.listdir(dirString)[1:]
+...     files = []
+...     for name in names:
+...         filename = "/Users/jeffreytrevino/Documents/UCSD/dissertation/chapters/webern/performances/mvmt1/" + name
+...         with open(filename) as f:
+...             lines = f.readlines()
+...             files.append( lines )
+...             f.close()
+...     return files
+... 
+>>> def splitFile(lines):
+...     splits = []
+...     for line in lines[1:]: 
+...         chopped = line.split()
+...         splits.append(chopped)
+...     return splits
+... 
+>>> def listData(splits):
+...     typedFile = []
+...     for line in splits[8:]:
+...         typed = [ float(line[0]), float(line[1]), int(line[2])]
+...         typedFile.append( typed )
+...     return typedFile
+... 
+>>> def linesToLists(lines):
+...     splits = splitFile(lines)
+...     lists = listData(splits)
+...     return lists
+... 
+>>> def getNameMarkupFromLists(files):
+...     nameStrings = []
+...     for lineList in files:
+...         name = lineList[3][14:-1]
+...         year = lineList[4][9:-1]
+...         record = lineList[5][10:-1]
+...         nameString = name + ", (" + year + ")"
+...         nameStrings.append( nameString )
+...     return nameStrings
+... \end{lstlisting}
+
+\caption{Reading recording data from file in Python. \index{Reading recording data from file in Python.}} 
+\end{figure}
+
+A representation of the score is necessary, as well, because each recorded performance must be pitched according to the score's pitch information. This may either be input from the file or hard-coded into the program; because file input allows the program to work more generally, this approach has been adopted here:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def readScore(fileDir):
+...     score = open(fileDir)
+...     scoreLines = score.readlines()
+...     score.close()
+...     return scoreLines
+... 
+>>> def splitScore(score):
+...     splits = []
+...     for line in score[1:]: 
+...         chopped = line.split()
+...         splits.append(chopped)
+...     return splits
+... 
+>>> def typeScore(splits):
+...     typedScore = []
+...     for line in splits:
+...         typed = [ int(line[0]), float(line[1]), int(line[2]), float(line[3]) ]
+...         replaced = []
+...         replaced.extend( typed[:] )
+...         replaced.extend( line[4:] )
+...         typedScore.append( replaced )
+...     return typedScore
+... 
+>>> def getScore(fileDir):
+...     lines = readScore(fileDir)
+...     splits = splitScore(lines)
+...     typed = typeScore(splits)
+...     return typed
+... 
+>>> def truncate_score_events_to_pitch_lists(score):
+...     pitch_lists = [ ]
+...     for event in score:
+...         pitch_list = event[4:]
+...         pitch_lists.append( pitch_list )
+...     return pitch_lists
+... \end{lstlisting}
+
+\caption{Processing recording data in Python. \index{Processing recording data from file in Python.}} 
+\end{figure}
+
+Next, the program must translate between the file format's pitch representation and Abjad's pitch representation; this varies greatly according to the text file's data representation but will always be straightforward using Python's string processing functions:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def last_character_in_string_is_accidental(string):
+...     if string[-1] == '-' or string[-1] == '#':
+...         return True
+...     else:
+...         return False
+... 
+>>> def get_octave_tick_string_from_craigslist_string(craigslist_string):
+...     if last_character_in_string_is_accidental(craigslist_string):
+...         octave_displacement = len(craigslist_string) - 1
+...     
+...     else:
+...         octave_displacement = len(craigslist_string)
+...     
+...     if craigslist_string[0].isupper():
+...         octave_number = 4 - octave_displacement
+...     else:
+...         octave_number = 3 + octave_displacement
+...     tick_string = pitchtools.octave_number_to_octave_tick_string(octave_number)
+...     return tick_string
+... 
+>>> def get_pitch_name_string_from_craigslist_string(craigslist_string):
+...     pitch_string = craigslist_string[0].lower()
+...     return pitch_string
+... 
+>>> def convert_accidental(accidental):
+...     accidental_dictionary = {'-': 'f', '#': 's'}
+...     return accidental_dictionary[ accidental ]
+... 
+>>> def get_pitch_string_from_craigslist_string(craigslist_string):
+...     pitch_string = ""
+...     pitch_name_string = get_pitch_name_string_from_craigslist_string(craigslist_string)
+...     pitch_string += pitch_name_string
+...     if last_character_in_string_is_accidental(craigslist_string):
+...         accidental_string = convert_accidental( craigslist_string[-1] )
+...         pitch_string += accidental_string
+...     octave_tick_string = get_octave_tick_string_from_craigslist_string(craigslist_string)
+...     pitch_string += octave_tick_string
+...     return pitch_string
+... \end{lstlisting}
+
+\caption{Reading pitch data from the score file. \index{Reading pitch data from the score file.}} 
+\end{figure}
+
+After these conversion functions query the pitches in the score representation, the pitches can be converted to Abjad pitch representations:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def convert_craigslist_pitch_string_to_named_chromatic_pitch(craigslist_string):
+...     pitch_string = get_pitch_string_from_craigslist_string(craigslist_string)
+...     pitch = pitchtools.NamedChromaticPitch(pitch_string)
+...     return pitch
+... 
+>>> def convert_craigslist_event_to_abjad_pitches(craigslist_event):
+...     out_list = [ ]
+...     for pitch in craigslist_event:
+...         abjad_pitch = convert_craigslist_pitch_string_to_named_chromatic_pitch(pitch)
+...         out_list.append( abjad_pitch )
+...     return out_list
+... 
+>>> def convert_craigslist_to_abjad_pitches(craigslist):
+...     output = [ ]
+...     event = [ ]
+...     for event in craigslist:
+...         converted_event = convert_craigslist_event_to_abjad_pitches(event)
+...         output.append( converted_event )
+...     return output
+... \end{lstlisting}
+
+\caption{Converting the score to Abjad's pitch representation. \index{Converting the score to Abjad's pitch representation.}} 
+\end{figure}
+
+The use of data abstraction allows the previous functions to culminate in a single function that parses multiple files:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def parseFiles(files):
+...     eventLists = []
+...     for eachFile in files:
+...         eventList = linesToLists( eachFile )
+...         eventLists.append( eventList )  
+...     return eventLists
+... \end{lstlisting}
+
+\caption{The final file parsing function. \index{The final file parsing function.}} 
+\end{figure}
+
+To determine notehead color, each performance's maximum and minimum amplitude values must be determined; after this, the color of each notehead may be determined by measuring amplitudes relative to the minimum and maximum amplitude in a given performance:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def calculateAmplitudeMinAndMax(eventList):
+...     amplitudes = [x[1] for x in eventList]
+...     return min(amplitudes), max(amplitudes)
+... 
+>>> def amplitudeToGrayscale(amplitude, bounds):
+...     shifted = amplitude - bounds[0]
+...     range = bounds[1] - bounds[0]
+...     scaled = 100 - int(shifted/range * 100 )
+...     return scaled
+... 
+>>> def colorChain(pair, bounds):
+...     chain = pair[0]
+...     event = pair[1]
+...     amplitude = event[1]
+...     for note in chain:
+...         grayscale = amplitudeToGrayscale(amplitude, bounds)
+...         note.override.note_head.color = schemetools.Scheme("x11-color", "'grey"+str(grayscale))
+...         note.override.accidental.color = schemetools.Scheme("x11-color", "'grey"+str(grayscale))
+... \end{lstlisting}
+
+\caption{Coloring noteheads according to amplitude. \index{Coloring noteheads according to amplitude.}} 
+\end{figure}
+
+Event data must be pre-processed before quantization, to ensure that all performances begin from a time of 0 and to convert a list of onset times into a list of durations (assuming 100\% legato, because the data set does not include silences); after this, Abjad's Q-grids quantizer converts the list of durations for each performance into a voice containing Abjad Note objects, durated according to an error-minimizing search, derived from the work of Paul Nauert and implemented by Josiah Oberholtzer (\cite{nauert1994theory}):
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def shiftOnsets(onsets):
+...     shift = onsets[0]
+...     shifted = [x - shift for x in onsets]
+...     return shifted
+... 
+>>> def quantizeOnsets(quantizer, q_schema, durations):
+...     msDurations = [1000 * x for x in durations]
+...     msDurations = [int(x) for x in msDurations]
+...     q_events = quantizationtools.QEventSequence.from_millisecond_durations(msDurations)
+...     voice = quantizer(q_events, q_schema = q_schema, attach_tempo_marks = False)
+...     return voice
+... 
+>>> def labelEvents(expr):
+...     for i,chain in enumerate(tietools.iterate_tie_chains_in_expr(expr.leaves[:-1])):
+...         markup = markuptools.Markup(r'\rounded-box "' + str(i+1) + r'"', Up, "event_number")(chain[0])
+... 
+>>> def onsetsToDurations(onsets):
+...     durations = []
+...     for x in range(len(onsets) -1 ):
+...         duration = onsets[x+1] - onsets[x]
+...         durations.append(duration)
+...     durations.append(1)
+...     return durations
+... 
+>>> def makeDuratedVoice(quantizer, q_schema, eventList):
+...     onsets = [x[0] for x in eventList] 
+...     onsets = shiftOnsets(onsets)
+...     durations = onsetsToDurations(onsets)
+...     voice = quantizeOnsets(quantizer, q_schema, durations)
+...     return voice
+... \end{lstlisting}
+
+\caption{Quantizing performance events with Abjad. \index{Quantizing performance events with Abjad.}} 
+\end{figure}
+
+After the performance file's events have been converted into a Voice object containing notes, the score's pitch information can be used to pitch the performance with the notes in the score:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_chord_string_from_pitch_list(pitch_list):
+...     string = pitch_list[0].chromatic_pitch_name
+...     for pitch in pitch_list[1:]:
+...         string += (" " + pitch.chromatic_pitch_name)
+...     return string
+... 
+>>> def make_chord_from_pitch_list(chord_duration, pitch_list):
+...     chord_duration_string = chord_duration.lilypond_duration_string
+...     chord_pitches_string = make_chord_string_from_pitch_list(pitch_list)
+...     chord_string = "<" + chord_pitches_string + ">" + chord_duration_string     
+...     chord = Chord(chord_string)
+...     return chord
+... 
+>>> def replace_leaf_with_pitched_leaf(leaf, pitch_list):
+...     index = leaf.parent.index( leaf )
+...     duration = leaf.written_duration
+...     if 1 < len(pitch_list):
+...         chord = make_chord_from_pitch_list(duration, pitch_list)
+...         leaf.parent[ index ] = chord
+...     else:
+...         note = Note(pitch_list[0], duration)
+...         leaf.parent[ index ] = note 
+... 
+>>> def pitch_chain_with_pitch_list(chain, pitch_list):
+...     for leaf in chain:
+...         replace_leaf_with_pitched_leaf(leaf, pitch_list)
+... 
+>>> def pitch_tie_chains_in_voice_with_pitch_lists(chains, pitch_lists):
+...     for pair in zip(chains, pitch_lists):
+...         chain = pair[0]
+...         pitch_list = pair[1]
+...         pitch_chain_with_pitch_list(chain, pitch_list)
+... \end{lstlisting}
+
+\caption{Pitching each performance according to the score data. \index{Pitching each performance according to the score data.}} 
+\end{figure}
+
+Next, each performance can be split at middle C and redistributed onto the treble and bass clefs of a piano staff, so that the notation may correspond more clearly to that of the published score:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def remove_number_label_from_chord(chord):
+...     markups = markuptools.get_markup_attached_to_component(chord)
+...     for markup in markups:
+...         if markup.markup_name == "event_number":
+...             markup.detach()
+... 
+>>> def replace_note_below_split_with_rest(note, split_pitch):
+...     if split_pitch.chromatic_pitch_number > note.written_pitch.chromatic_pitch_number:
+...             duration = note.written_duration
+...             rest = leaftools.make_tied_leaf( Rest, duration )
+...             index = note.parent.index( note )
+...             note.parent[ index: index+1 ] = rest
+... 
+>>> def remove_chord_pitches_below_split(chord, split_pitch):
+...     index = chord.parent.index( chord )
+...     for note in reversed(chord):
+...         if split_pitch.chromatic_pitch_number > note.written_pitch.chromatic_pitch_number:
+...             note_index = chord.written_pitches.index( note )
+...             chord.pop(note_index)
+...     if 0 == len(chord.written_pitches):
+...         rest = leaftools.make_tied_leaf( Rest, chord.written_duration )
+...         chord.parent[ index:index+1 ] = rest
+... 
+>>> def remove_chord_pitches_above_split(chord, split_pitch):
+...     index = chord.parent.index( chord )
+...     popped = 0
+...     for note in reversed(chord):
+...         if split_pitch.chromatic_pitch_number <= note.written_pitch.chromatic_pitch_number:
+...             note_index = chord.written_pitches.index( note )
+...             chord.pop(note_index)
+...             popped = 1
+...     if 0 == len(chord.written_pitches):
+...         rest = leaftools.make_tied_leaf( Rest, chord.written_duration )
+...         chord.parent[ index:index+1 ] = rest
+...     elif popped:
+...         remove_number_label_from_chord(chord)
+... \end{lstlisting}
+
+\caption{Typographical manipulations to split one staff to a piano staff. \index{Typographical manipulations to split one staff to a piano staff.}} 
+\end{figure}
+
+
+
+After functions to replace components appropriately with rests have been initialized, it becomes possible to split the staff by creating two copies of the staff and then deleting certain components either above or below the specified split point:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def split_components_to_piano_staff_at_pitch(voice, split_pitch = pitchtools.NamedChromaticPitch("c'")):
+...     labelEvents(voice)
+...     piano_staff = scoretools.PianoStaff()
+...     treble_staff = Staff()
+...     treble_staff.name = "treble"
+...     bass_staff = Staff()
+...     bass_staff.name = "bass"
+...     copies = componenttools.copy_components_and_covered_spanners( [voice] )
+...     treble_voice = Voice(copies)
+...     copies = componenttools.copy_components_and_covered_spanners( [voice] )
+...     bass_voice = Voice(copies)
+...     remove_pitches_below_split_in_components(treble_voice, split_pitch)
+...     remove_pitches_above_split_in_components(bass_voice, split_pitch)
+...     bass_staff.extend(bass_voice[:])
+...     treble_staff.extend(treble_voice[:])
+...     contexttools.ClefMark('bass')(bass_staff)
+...     piano_staff.extend([treble_staff,bass_staff])
+...     piano_staff.override.beam.transparent = True
+...     piano_staff.override.tuplet_bracket.stencil = False
+...     piano_staff.override.tuplet_number.stencil = False
+...     piano_staff.override.dots.transparent = True
+...     piano_staff.override.rest.transparent = True
+...     piano_staff.override.tie.transparent = True
+...     piano_staff.override.stem.transparent = True
+...     piano_staff.override.flag.stencil = False
+...     for staff in piano_staff:
+...         for chain in tietools.iterate_tie_chains_in_expr(staff):
+...             for note in chain[1:]:
+...                 note.override.note_head.transparent = True
+...                 note.override.note_head.no_ledgers = True
+...                 note.override.accidental.stencil = False
+...     contexttools.TimeSignatureMark((1, 4))(piano_staff[0])
+...     return piano_staff
+... \end{lstlisting}
+
+\caption{Splitting a performance to a piano staff. \index{Splitting a performance to a piano staff.}} 
+\end{figure}
+
+Finally, the previous functions can be encapsulated into a function that converts a single performance into a notated staff and a second function that calls the first to convert an arbitrary number of performance files into a score containing one performance per staff:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def make_pitched_and_colored_piano_staff(voice, score_pitch_lists, performance_event_list):
+...     bounds = calculateAmplitudeMinAndMax(performance_event_list)
+...     chains = tietools.iterate_tie_chains_in_expr(voice)
+...     pitch_tie_chains_in_voice_with_pitch_lists(chains, score_pitch_lists)
+...     chains = tietools.iterate_tie_chains_in_expr(voice)
+...     chainsAndEvents = zip(chains,performance_event_list)
+...     for pair in chainsAndEvents:
+...         colorChain(pair, bounds)
+...     piano_staff = split_components_to_piano_staff_at_pitch(voice)
+...     return piano_staff 
+... 
+>>> def makeAmplitudePhrasingScore(score_pitch_lists, performance_event_lists):
+...     staffs = []
+...     q_schema =  quantizationtools.BeatwiseQSchema(tempo = contexttools.TempoMark((1,4), 60))
+...     quantizer = quantizationtools.Quantizer()
+...     for x,performance_event_list in enumerate(performance_event_lists):
+...         voice = makeDuratedVoice(quantizer, q_schema, performance_event_list)
+...         print voice
+...         piano_staff = make_pitched_and_colored_piano_staff(voice, score_pitch_lists, performance_event_list)
+...         staffs.append( piano_staff )
+...         print "MAKE SCORE -- Added staff " + str(x+1) + "/" + str( len(performance_event_lists) )
+...     score = Score([])
+...     for staff in staffs:
+...         score.append( staff )
+...     score.set.proportional_notation_duration = schemetools.SchemeMoment(1, 56)
+...     score.set.tuplet_full_length = True
+...     score.override.spacing_spanner.uniform_stretching = True
+...     score.override.spacing_spanner.strict_note_spacing = True
+...     score.set.tuplet_full_length = True
+...     score.override.tuplet_bracket.padding = 2
+...     score.override.tuplet_bracket.staff_padding = 4
+...     score.override.tuplet_number.text = schemetools.Scheme('tuplet-number::calc-fraction-text')
+...     score.override.time_signature.stencil = False
+...     score.override.span_bar.stencil = False
+...     marktools.LilyPondCommandMark("set Timing.defaultBarType = \"dashed\"")(score)
+...     return score
+... \end{lstlisting}
+
+\caption{Final encapsulations, including format and layout of the Score object. \index{Final encapsulations, including format and layout of the Score object.}} 
+\end{figure}
+
+Lastly, the score initializes a LilyPondFile object, the attribute values of which determine the layout and format of the generated document; after this, the entire process can be encapsulated in a single function:
+
+\begin{figure}[H]
+\begin{lstlisting}[basicstyle=\scriptsize\ttfamily, breaklines=True, tabsize=4, showtabs=false, showspaces=false]
+>>> def formatAmplitudePhrasingScore(files, score):
+...     nameStrings = getNameMarkupFromLists(files)
+...     namesAndStaffs = zip(nameStrings,score)
+...     for name,staff in namesAndStaffs:
+...         contexttools.InstrumentMark(name,name, target_context = scoretools.PianoStaff)(staff)
+...     lilypond_file = lilypondfiletools.make_basic_lilypond_file(score)
+...     lilypond_file.paper_block.paper_width = 36 * 25.4
+...     lilypond_file.paper_block.paper_height = 48 * 25.4
+...     lilypond_file.paper_block.left_margin = 1.5 * 25.4
+...     lilypond_file.paper_block.right_margin = 1.5 * 25.4
+...     lilypond_file.paper_block.top_margin = .5 * 25.4
+...     lilypond_file.paper_block.ragged_bottom = False
+...     lilypond_file.global_staff_size = 8
+...     lilypond_file.layout_block.indent = 0
+...     lilypond_file.header_block.title = markuptools.Markup("Loudness and Duration in 61 Recordings of Webern's Piano Variations")
+...     lilypond_file.layout_block.ragged_right = False
+...     return lilypond_file
+... 
+>>> def quantizeInterpretations(scoreDirectory, performanceDirectory):
+...     performance_files = getFiles(performanceDirectory)
+...     webern_score = getScore(scoreDirectory)
+...     score_events = truncate_score_events_to_pitch_lists(webern_score)
+...     score_pitch_lists = convert_craigslist_to_abjad_pitches(score_events)
+...     performance_event_lists = parseFiles(performance_files)
+...     analysis_score = makeAmplitudePhrasingScore(score_pitch_lists, performance_event_lists)
+...     lily = formatAmplitudePhrasingScore(performance_files, analysis_score)
+...     return lily
+... \end{lstlisting}
+
+\caption{The final automatic notation function. \index{The final automatic notation function.}} 
+\end{figure}
+
+Calling this last function on a score and performance directory will generate a comparative score from the performance files in the performance directory; because the document comparing the full 61 performances was too large for the current document, the results of the program when run on performance data only for Glenn Gould's interpretations of the Webern movement have been included in the score appendix (\ref{sec:gould}).
+
+\section{Conclusion and Future Directions for Research}
+
+Musical notation functions as a data visualization, not a musical analysis, in this application. This comparative notation does not make obvious the relationships between timing and amplitude that together constitute phrasing in an interpretation. Rather, the score offers, as an interface for analysis, an exact notation of two constituent elements that may be closely examined to reveal the nature of phrasing. A review of the diversity of interpretations represented in the comparative notation here reveals the myriad possibilities inherent in performances from just one score, in the choice of tempo, the stretching of time within a tempo, and the corresponding archings of amplitude that group musical events. Each interpretation proposes its own language of speeding and slowing, of loudening and softening, in order to convey larger musical shapes, and each interpretation can be heard as an equally valid parsing of the musical score.
+
+This application also demonstrates that digital tools for analysis and composition are converging: Michael Cuthbert, leader of the Music21 project, a Python library for corpus-based musicology, has indicated that upcoming versions of Music21 will include new functions that make it easier for composers to create new notations using the library (\cite{Cuthbert:2013ys}); likewise, this analytical use of an ostensibly composer-oriented Python library shows that it is possible to use the same notational utilities for musicological purposes.
+
+Many possible extensions of this interface could offer an improved visualization suite for recording data. A visualization that links more clearly each interpretation to the score from which the interpretations have been is an important goal: while the current system of enumerated events allows reference to an annotated musical score, it does not offer a transparent link between interpretation and score. A legible relationship could be easily introduced by reintroducing beams into the notation to group noteheads as the score beams them, while retaining the proportional spacing that results from the interpretation.
+
+A GUI specific to this application would also be helpful. The linking of audio playback and score would allow the scholar-performer to scrub or loop audio, in order to focus attention on a specific moment in the music, and an interface as simple as a series of radio buttons would allow the user to select specific interpretations to compare. A graphical link between notation and audio, in the form of a scrolling timeline and the ability to highlight notation and hear the corresponding audio, would facilitate the use of the proposed data representation.
